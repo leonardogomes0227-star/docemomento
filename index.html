@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Doce Momento · Cookies, Brownies & Brookies em Rio Verde - MS</title>
-<meta name="description" content="Cookies feitos com amor, brownies e brookies com entrega em Rio Verde - MS. Peça pelo WhatsApp!">
+<meta name="description" content="Cookies feitos com amor, brownies e brookies com entrega em Rio Verde - MS. Monte seu pedido e envie pelo WhatsApp!">
 <meta name="theme-color" content="#fde9c8">
 <meta property="og:title" content="Doce Momento · Sweet & Crispy">
 <meta property="og:description" content="Cookies feitos com amor, brownies & brookies. Entregamos em Rio Verde - MS.">
@@ -12,10 +12,12 @@
 <link rel="icon" href="assets/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Playpen+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playpen+Sans:wght@500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<div class="topbar">🛵 Entregamos em Rio Verde - MS &nbsp;·&nbsp; Peça pelo WhatsApp e receba fresquinho 🤎</div>
 
 <header class="nav">
   <a class="brand" href="#topo" aria-label="Doce Momento">
@@ -24,114 +26,180 @@
   </a>
   <nav>
     <a href="#cardapio">Cardápio</a>
-    <a href="#como-pedir">Como pedir</a>
-    <a href="#sobre">Sobre nós</a>
-    <a class="btn btn-sm" href="#" data-wa="Oi! Vim pelo site e quero fazer um pedido 🍪">Pedir agora</a>
+    <a href="#diferenciais">Diferenciais</a>
+    <a href="#bastidores">Bastidores</a>
+    <a href="#duvidas">Dúvidas</a>
+    <a class="btn btn-sm" href="#cardapio">Montar pedido</a>
   </nav>
 </header>
 
 <main id="topo">
 
+  <!-- HERO -->
   <section class="hero">
-    <div class="hero-text">
+    <span class="float f1" aria-hidden="true">🎀</span>
+    <span class="float f2" aria-hidden="true">🤎</span>
+    <span class="float f3" aria-hidden="true">🍪</span>
+    <span class="float f4" aria-hidden="true">🎀</span>
+    <span class="float f5" aria-hidden="true">✨</span>
+
+    <div class="hero-text reveal">
       <p class="tag">🍪 Sweet &amp; Crispy</p>
       <h1>Cookies feitos <em>com amor</em> para adoçar o seu momento</h1>
-      <p class="lead">Cookies crocantes por fora, macios por dentro, além de brownies e brookies. Tudo artesanal, feito na hora e entregue em Rio Verde - MS.</p>
+      <p class="lead">Crocantes por fora, macios por dentro. Cookies, brownies e brookies artesanais, feitos com carinho e entregues na sua porta em Rio Verde - MS.</p>
       <div class="actions">
-        <a class="btn" href="#" data-wa="Oi! Vim pelo site e quero fazer um pedido 🍪">Fazer meu pedido</a>
-        <a class="btn btn-ghost" href="#cardapio">Ver cardápio</a>
+        <a class="btn" href="#cardapio">Montar meu pedido</a>
+        <a class="btn btn-ghost" href="#" data-wa="Oi! Vim pelo site e quero fazer um pedido 🍪">Chamar no WhatsApp</a>
       </div>
-      <ul class="perks">
-        <li>🛵 Fazemos entregas</li>
-        <li>🤎 Artesanal</li>
-        <li>📍 Rio Verde - MS</li>
+      <ul class="stats">
+        <li><strong>417+</strong><span>seguidores<br>apaixonados</span></li>
+        <li><strong>100%</strong><span>artesanal<br>e feito à mão</span></li>
+        <li><strong>🛵</strong><span>entrega em<br>Rio Verde</span></li>
       </ul>
     </div>
-    <div class="hero-art">
-      <img src="assets/logo.jpg" alt="Logo Doce Momento: cookies em um saquinho com laço" width="460" height="460">
+
+    <div class="hero-art reveal">
+      <div class="blob"></div>
+      <img src="assets/logo.jpg" alt="Logo Doce Momento: cookies em um saquinho com laço" width="440" height="440">
+      <div class="sticker s1">Feito com amor 🤎</div>
+      <div class="sticker s2">Crocante &amp; macio ✨</div>
     </div>
   </section>
 
-  <div class="wave" aria-hidden="true"></div>
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>🍪 Cookies</span><span>🍫 Brownies</span><span>😍 Brookies</span><span>🤎 Feito com amor</span><span>🛵 Entrega em Rio Verde</span>
+      <span>🍪 Cookies</span><span>🍫 Brownies</span><span>😍 Brookies</span><span>🤎 Feito com amor</span><span>🛵 Entrega em Rio Verde</span>
+    </div>
+  </div>
 
+  <!-- CARDÁPIO -->
   <section id="cardapio" class="section">
-    <p class="eyebrow">Nosso cardápio</p>
-    <h2>Escolha o seu favorito</h2>
-    <p class="sub">Os sabores mudam com frequência. Chama no WhatsApp para saber o que saiu do forno hoje!</p>
+    <p class="eyebrow reveal">Nosso cardápio</p>
+    <h2 class="reveal">Monte o seu pedido</h2>
+    <p class="sub reveal">Escolha as quantidades e toque em <b>Enviar no WhatsApp</b>. Seu pedido já vai prontinho na conversa!</p>
 
     <div class="cards">
-      <article class="card">
+      <article class="card reveal" data-item="Cookie">
+        <span class="badge">⭐ Carro-chefe</span>
         <div class="thumb pink">
-          <svg viewBox="0 0 120 120" role="img" aria-label="Cookie"><circle cx="60" cy="60" r="44" fill="#b9733f"/><circle cx="60" cy="60" r="44" fill="none" stroke="#9a5a2e" stroke-width="4"/><g fill="#4a2b17"><ellipse cx="42" cy="48" rx="6" ry="5"/><ellipse cx="72" cy="42" rx="5" ry="4"/><ellipse cx="80" cy="68" rx="6" ry="5"/><ellipse cx="52" cy="76" rx="5" ry="4"/><ellipse cx="62" cy="60" rx="4" ry="3"/><ellipse cx="34" cy="68" rx="3" ry="3"/></g></svg>
+          <svg viewBox="0 0 120 120" role="img" aria-label="Cookie"><circle cx="60" cy="62" r="46" fill="#9a5a2e"/><circle cx="60" cy="58" r="44" fill="#c4814a"/><circle cx="60" cy="58" r="44" fill="none" stroke="#a8683a" stroke-width="3" stroke-dasharray="2 7" stroke-linecap="round"/><g fill="#4a2b17"><ellipse cx="42" cy="44" rx="7" ry="5.500"/><ellipse cx="74" cy="38" rx="6" ry="4.500"/><ellipse cx="82" cy="66" rx="7" ry="5.500"/><ellipse cx="52" cy="76" rx="6" ry="4.500"/><ellipse cx="62" cy="58" rx="5" ry="3.500"/><ellipse cx="32" cy="66" rx="4" ry="3.500"/><ellipse cx="68" cy="82" rx="4" ry="3"/></g></svg>
         </div>
         <h3>Cookies</h3>
-        <p>Crocantes por fora, macios por dentro e recheados de chocolate. O carro-chefe da casa.</p>
-        <a class="btn btn-sm" href="#" data-wa="Oi! Quero pedir cookies 🍪 Quais sabores tem hoje?">Pedir cookies</a>
+        <p>Crocantes por fora, macios por dentro e cheios de chocolate. O queridinho da casa.</p>
+        <div class="qty" role="group" aria-label="Quantidade de cookies">
+          <button type="button" data-d="-1" aria-label="Diminuir">−</button>
+          <output>0</output>
+          <button type="button" data-d="1" aria-label="Aumentar">+</button>
+        </div>
       </article>
 
-      <article class="card">
+      <article class="card reveal" data-item="Brownie">
         <div class="thumb cream">
-          <svg viewBox="0 0 120 120" role="img" aria-label="Brownie"><rect x="22" y="30" width="76" height="62" rx="10" fill="#4a2b17"/><rect x="22" y="30" width="76" height="20" rx="10" fill="#6b3f22"/><g fill="#7a4a29"><circle cx="40" cy="66" r="5"/><circle cx="64" cy="72" r="4"/><circle cx="82" cy="62" r="5"/></g><path d="M30 38c8 6 14-2 22 3s14-3 22 2 14-2 18 2" stroke="#f9b8c0" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+          <svg viewBox="0 0 120 120" role="img" aria-label="Brownie"><rect x="20" y="36" width="80" height="58" rx="10" fill="#2f1a0d"/><rect x="20" y="30" width="80" height="58" rx="10" fill="#4a2b17"/><path d="M20 42a10 10 0 0 1 10-12h60a10 10 0 0 1 10 12c-8 7-14-2-22 4s-14-3-22 3-14-2-22 3-14 0-14-3z" fill="#6b3f22"/><g fill="#7a4a29"><circle cx="38" cy="68" r="5"/><circle cx="62" cy="74" r="4"/><circle cx="84" cy="64" r="5"/></g><path d="M30 40c10 6 14-2 24 3s14-3 24 2 12-1 14 0" stroke="#f9b8c0" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
         </div>
         <h3>Brownies</h3>
-        <p>Intensos, úmidos e bem chocolatudos. Do jeitinho que a gente gosta de comer.</p>
-        <a class="btn btn-sm" href="#" data-wa="Oi! Quero pedir brownies 🍫 Quais opções tem hoje?">Pedir brownies</a>
+        <p>Intensos, úmidos e bem chocolatudos. Do jeitinho que a gente gosta de comer de colher.</p>
+        <div class="qty" role="group" aria-label="Quantidade de brownies">
+          <button type="button" data-d="-1" aria-label="Diminuir">−</button>
+          <output>0</output>
+          <button type="button" data-d="1" aria-label="Aumentar">+</button>
+        </div>
       </article>
 
-      <article class="card">
+      <article class="card reveal" data-item="Brookie">
+        <span class="badge">😍 Dois em um</span>
         <div class="thumb pink">
-          <svg viewBox="0 0 120 120" role="img" aria-label="Brookie"><rect x="20" y="28" width="80" height="64" rx="12" fill="#b9733f"/><path d="M20 60h80v20a12 12 0 0 1-12 12H32a12 12 0 0 1-12-12z" fill="#4a2b17"/><g fill="#4a2b17"><ellipse cx="40" cy="44" rx="6" ry="5"/><ellipse cx="68" cy="40" rx="5" ry="4"/><ellipse cx="86" cy="50" rx="5" ry="4"/></g><path d="M20 60c10 6 16-4 26 1s16-4 26 1 18-3 28 0" stroke="#fde9c8" stroke-width="3" fill="none"/></svg>
+          <svg viewBox="0 0 120 120" role="img" aria-label="Brookie"><rect x="18" y="30" width="84" height="64" rx="14" fill="#c4814a"/><path d="M18 62h84v18a14 14 0 0 1-14 14H32a14 14 0 0 1-14-14z" fill="#4a2b17"/><path d="M18 62c10 7 16-4 26 1s16-5 26 0 20-4 32 1" stroke="#fde9c8" stroke-width="3" fill="none"/><g fill="#4a2b17"><ellipse cx="40" cy="45" rx="7" ry="5"/><ellipse cx="68" cy="40" rx="6" ry="4.500"/><ellipse cx="88" cy="50" rx="5" ry="4"/></g></svg>
         </div>
         <h3>Brookies</h3>
         <p>O melhor dos dois mundos: metade cookie, metade brownie. Impossível comer só um.</p>
-        <a class="btn btn-sm" href="#" data-wa="Oi! Quero pedir brookies 😍 Quais opções tem hoje?">Pedir brookies</a>
+        <div class="qty" role="group" aria-label="Quantidade de brookies">
+          <button type="button" data-d="-1" aria-label="Diminuir">−</button>
+          <output>0</output>
+          <button type="button" data-d="1" aria-label="Aumentar">+</button>
+        </div>
       </article>
     </div>
 
-    <p class="note">💌 Encomendas para festas, presentes e lembrancinhas? Fale com a gente!</p>
+    <p class="note reveal">💌 Quer encomendar para festa, presente ou lembrancinha? <a class="link" href="#" data-wa="Oi! Quero fazer uma encomenda especial 🎁">Fale com a gente</a></p>
   </section>
 
-  <section id="como-pedir" class="section soft">
-    <p class="eyebrow">Como pedir</p>
-    <h2>Simples e rapidinho</h2>
-    <ol class="steps">
-      <li><span>1</span><h3>Escolha</h3><p>Veja o cardápio e decida o que vai matar a vontade.</p></li>
-      <li><span>2</span><h3>Chame no WhatsApp</h3><p>Mande uma mensagem com o seu pedido e o endereço.</p></li>
-      <li><span>3</span><h3>Receba em casa</h3><p>Fazemos a entrega em Rio Verde - MS, fresquinho.</p></li>
-    </ol>
-    <div class="center"><a class="btn" href="#" data-wa="Oi! Vim pelo site e quero fazer um pedido 🍪">Começar meu pedido</a></div>
-  </section>
-
-  <section id="sobre" class="section about">
-    <div class="about-box">
-      <img src="assets/logo.jpg" alt="" width="160" height="160">
-      <div>
-        <p class="eyebrow">Sobre nós</p>
-        <h2>Uma doceria feita de carinho</h2>
-        <p>A Doce Momento nasceu do amor por cozinhar e de querer transformar um dia comum em um momento doce. Cada cookie, brownie e brookie é feito à mão, com ingredientes selecionados e muito cuidado, porque tem coisas que o alface não cura. 🍪</p>
-        <p><a class="link" href="https://instagram.com/doceria.docemomento._" target="_blank" rel="noopener">Veja os bastidores no Instagram →</a></p>
-      </div>
+  <!-- DIFERENCIAIS -->
+  <section id="diferenciais" class="section soft">
+    <p class="eyebrow reveal">Por que amar</p>
+    <h2 class="reveal">Feito com carinho, do começo ao fim</h2>
+    <div class="features">
+      <div class="feat reveal"><span>🤎</span><h3>Feito com amor</h3><p>Cada doce é preparado à mão, com cuidado e carinho em cada detalhe.</p></div>
+      <div class="feat reveal"><span>🍪</span><h3>Crocante &amp; macio</h3><p>O equilíbrio perfeito: casquinha crocante e o miolo macio que derrete.</p></div>
+      <div class="feat reveal"><span>🛵</span><h3>Entregamos</h3><p>Receba em casa, sem sair do sofá, em toda Rio Verde - MS.</p></div>
+      <div class="feat reveal"><span>🎁</span><h3>Lindo para presentear</h3><p>Embalagens fofas com laço, prontas para surpreender quem você ama.</p></div>
     </div>
   </section>
 
+  <!-- BASTIDORES -->
+  <section id="bastidores" class="section">
+    <p class="eyebrow reveal">Bastidores</p>
+    <h2 class="reveal">Direto da nossa cozinha</h2>
+    <p class="sub reveal">Um pedacinho do dia a dia da Doce Momento. Tem mais lá no Instagram!</p>
+    <div class="gallery">
+      <a class="shot reveal" href="https://instagram.com/doceria.docemomento._" target="_blank" rel="noopener"><img src="assets/g1.jpg" alt="Cookie na embalagem" loading="lazy"></a>
+      <a class="shot reveal" href="https://instagram.com/doceria.docemomento._" target="_blank" rel="noopener"><img src="assets/g2.jpg" alt="Nossa equipe na cozinha" loading="lazy"></a>
+      <a class="shot reveal" href="https://instagram.com/doceria.docemomento._" target="_blank" rel="noopener"><img src="assets/g3.jpg" alt="Produtos da loja" loading="lazy"></a>
+      <a class="shot reveal" href="https://instagram.com/doceria.docemomento._" target="_blank" rel="noopener"><img src="assets/g4.jpg" alt="Preparando a massa de chocolate" loading="lazy"></a>
+      <a class="shot reveal" href="https://instagram.com/doceria.docemomento._" target="_blank" rel="noopener"><img src="assets/g5.jpg" alt="Chocolate derretido sendo servido" loading="lazy"></a>
+    </div>
+    <p class="center reveal"><a class="btn btn-ghost" href="https://instagram.com/doceria.docemomento._" target="_blank" rel="noopener">Ver mais no Instagram</a></p>
+  </section>
+
+  <!-- COMO PEDIR -->
+  <section class="section soft">
+    <p class="eyebrow reveal">Como pedir</p>
+    <h2 class="reveal">Simples e rapidinho</h2>
+    <ol class="steps">
+      <li class="reveal"><span>1</span><h3>Escolha</h3><p>Monte seu pedido no cardápio com as quantidades que quiser.</p></li>
+      <li class="reveal"><span>2</span><h3>Envie no WhatsApp</h3><p>Um toque e a lista vai pronta na conversa. É só informar o endereço.</p></li>
+      <li class="reveal"><span>3</span><h3>Receba em casa</h3><p>A gente leva fresquinho até você em Rio Verde - MS.</p></li>
+    </ol>
+  </section>
+
+  <!-- DÚVIDAS -->
+  <section id="duvidas" class="section">
+    <p class="eyebrow reveal">Dúvidas</p>
+    <h2 class="reveal">Perguntas frequentes</h2>
+    <div class="faq reveal">
+      <details><summary>Vocês fazem entregas?</summary><p>Sim! Entregamos em Rio Verde - MS. Combine o endereço e o horário pelo WhatsApp.</p></details>
+      <details><summary>Como faço meu pedido?</summary><p>Monte o pedido aqui no site e envie pelo WhatsApp, ou chame direto no (66) 99961-0260.</p></details>
+      <details><summary>Fazem encomendas para festas e presentes?</summary><p>Fazemos sim! Chame a gente no WhatsApp com a data e a quantidade que a gente combina tudo.</p></details>
+      <details><summary>Quais sabores têm hoje?</summary><p>Os sabores variam. Pergunte pelo WhatsApp ou acompanhe nossos stories no Instagram.</p></details>
+    </div>
+  </section>
+
+  <!-- CONTATO -->
   <section class="section contact">
-    <h2>Bateu a vontade?</h2>
-    <p class="sub">Peça pelo WhatsApp ou acompanhe as novidades no Instagram.</p>
-    <div class="actions center">
-      <a class="btn" href="#" data-wa="Oi! Vim pelo site e quero fazer um pedido 🍪">WhatsApp (66) 99961-0260</a>
-      <a class="btn btn-ghost" href="https://instagram.com/doceria.docemomento._" target="_blank" rel="noopener">@doceria.docemomento._</a>
+    <h2 class="reveal">Bateu a vontade? 🍪</h2>
+    <p class="sub reveal">Peça pelo WhatsApp ou acompanhe as novidades no Instagram.</p>
+    <div class="actions center reveal">
+      <a class="btn btn-white" href="#" data-wa="Oi! Vim pelo site e quero fazer um pedido 🍪">WhatsApp (66) 99961-0260</a>
+      <a class="btn btn-white" href="https://instagram.com/doceria.docemomento._" target="_blank" rel="noopener">@doceria.docemomento._</a>
     </div>
     <p class="small">Outro contato para pedidos: (67) 98475-3670 · Rio Verde - MS</p>
   </section>
 </main>
 
 <footer>
-  <img src="assets/logo.jpg" alt="" width="56" height="56">
+  <img src="assets/logo.jpg" alt="" width="64" height="64">
   <p>© <span id="ano"></span> Doce Momento · Sweet &amp; Crispy 🤎</p>
 </footer>
 
+<!-- Barra do pedido -->
+<div class="cart" id="cart" hidden>
+  <div><strong id="cartCount">0</strong> item(ns) no pedido<small id="cartList"></small></div>
+  <a class="btn btn-sm btn-white" id="cartBtn" href="#" target="_blank" rel="noopener">Enviar no WhatsApp</a>
+</div>
+
 <a class="wa-float" href="#" data-wa="Oi! Vim pelo site e quero fazer um pedido 🍪" aria-label="Pedir pelo WhatsApp">
-  <svg viewBox="0 0 24 24" width="28" height="28" fill="#fff" aria-hidden="true"><path d="M12 2C6.5 2 2 6.2 2 11.5c0 2 .7 3.900 1.900 5.400L3 21.500l4.800-1.700c1.300.6 2.700.9 4.200.9 5.500 0 10-4.200 10-9.500S17.500 2 12 2zm-3 6h1.500l1 2.500-1 1c.7 1.300 1.700 2.300 3 3l1-1 2.500 1V16c-.5.600-1.300 1-2.200 1C10.800 17 7 13.200 7 9.700 7 9 8 8 9 8z"/></svg>
+  <svg viewBox="0 0 24 24" width="28" height="28" fill="#fff" aria-hidden="true"><path d="M12 2C6.500 2 2 6.200 2 11.500c0 2 .7 3.900 1.900 5.400L3 21.500l4.800-1.700c1.300.6 2.700.9 4.200.9 5.500 0 10-4.200 10-9.500S17.500 2 12 2zm-3 6h1.500l1 2.500-1 1c.7 1.300 1.700 2.300 3 3l1-1 2.500 1V16c-.5.600-1.300 1-2.200 1C10.800 17 7 13.200 7 9.700 7 9 8 8 9 8z"/></svg>
 </a>
 
 <script src="script.js"></script>
