@@ -26,7 +26,7 @@ jobs:
       - name: Montar pasta do site
         run: |
           mkdir _site
-          cp -r index.html style.css script.js assets _site/
+          cp -r *.html *.js *.css assets _site/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

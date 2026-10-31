@@ -4,39 +4,6 @@ document.documentElement.classList.add("js");
 const WHATSAPP = "5566999610260";
 const TAXA_ENTREGA = 3;
 
-// Cardápio: para mudar preço ou descrição, edite aqui.
-// price: null = "consulte o valor" (não entra no total).
-const MASSAS = (price) => [
-  { label: "Massa tradicional", price },
-  { label: "Massa black", price },
-];
-const PRODUTOS = [
-  { titulo: "🍪 Cookies", itens: [
-    { nome: "Cookie tradicional", img: "cookie-massa-black", desc: "Cookie clássico com gotas de chocolate. Escolha a massa: tradicional ou black.", variantes: MASSAS(8) },
-    { nome: "Cookie simples de Nutella", img: "cookie-nutella-simples", desc: "Massa de cookie com Nutella por cima para dar aquele toque especial.", variantes: MASSAS(13) },
-    { nome: "Cookie simples de Kinder", img: "cookie-kinder", desc: "Nossa massa de cookie com recheio de Kinder por cima.", variantes: MASSAS(13) },
-    { nome: "Kinder Lovers", img: "cookie-kinder-lovers", desc: "Cookie douradinho por fora, macio por dentro e recheado com muito creme de Kinder!", variantes: MASSAS(20) },
-    { nome: "Nutella Lovers", img: "cookie-nutella-lovers", desc: "Um cookie especial, com sabor marcante e muito recheio de Nutella para deixar tudo ainda mais gostoso.", variantes: MASSAS(22) },
-    { nome: "Cookie Nutkinder", img: "cookie-nutkinder", desc: "A combinação perfeita, Kinder com Nutella em um só!", variantes: MASSAS(null) },
-  ]},
-  { titulo: "🥧 Tortas", itens: [
-    { nome: "Torta de Nutella", img: "torta-nutella", desc: "Massa deliciosa com muito recheio de Nutella, perfeita para os apaixonados por chocolate.", variantes: [{ price: 30 }] },
-    { nome: "Torta de Kinder", img: "torta-kinder", desc: "Massa delicada com recheio cremoso de Kinder, trazendo todo o sabor e a cremosidade que você ama.", variantes: [{ price: 28 }] },
-    { nome: "Torta suprema", img: "torta-suprema", desc: "Nossa torta suprema, uma massa deliciosa de brownie com brigadeiro de Ninho, Nutella e Kinder Bueno!", variantes: [{ price: 35 }] },
-  ]},
-  { titulo: "🍫 Brownies", itens: [
-    { nome: "Brownie tradicional", img: "brownie-tradicional", desc: "Brownie fofinho por dentro, com sabor intenso de chocolate e uma casquinha deliciosa.", variantes: [{ price: 12 }] },
-    { nome: "Brownie com Nutella", img: "brownie-nutella", desc: "Brownie macio e chocolatudo, com uma generosa camada de Nutella para deixar cada mordida irresistível.", variantes: [{ price: 15 }] },
-    { nome: "Fondue de brownie", img: "fondue-de-brownie", desc: "Brownie na quantidade certa, acompanhado de brigadeiro de Ninho e Nutella para uma combinação perfeita!", variantes: [{ price: 20 }] },
-  ]},
-  { titulo: "😍 Brookies", itens: [
-    { nome: "Brookie", img: "brookie", desc: "A união perfeita entre brownie e cookie, trazendo duas texturas deliciosas em uma só sobremesa.", variantes: [{ label: "Tradicional", price: 15 }, { label: "Com Nutella", price: 18 }] },
-  ]},
-  { titulo: "🥟 Salgados", itens: [
-    { nome: "Empada de frango", img: "empada-de-frango", desc: "Massa leve e delicada, com recheio cremoso de frango bem temperadinho.", variantes: [{ price: 28 }] },
-  ]},
-];
-
 const brl = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const wa = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
 const $ = (id) => document.getElementById(id);
@@ -48,30 +15,64 @@ document.querySelectorAll("[data-wa]").forEach((a) => {
 });
 $("ano").textContent = new Date().getFullYear();
 
-// Monta o cardápio
+// Cardápio: vem do Firebase (painel da Ana) e, sem ele, de catalogo.js
+const { esc } = DM;
+let produtos = CATALOGO.map((p) => ({ ...p }));
 const qtd = {}; // chave "produto|variante" -> { nome, label, price, n }
+let contagemSalva = {};
 const key = (p, v) => `${p.nome}|${v.label || ""}`;
-PRODUTOS.flatMap((g) => g.itens).forEach((p) =>
-  p.variantes.forEach((v) => (qtd[key(p, v)] = { nome: p.nome, label: v.label || "", price: v.price ?? null, n: 0 })));
+const variantesDe = (p) => (p.variantes && p.variantes.length ? p.variantes : [{ price: null }]);
+const imgSrc = (p) => (!p.img ? "" : /^(data:|https?:)/.test(p.img) ? p.img : `assets/${p.img}.jpg`);
 
-$("menu").innerHTML = PRODUTOS.map((g) => `
-  <h3 class="group reveal">${g.titulo}</h3>
-  <div class="cards">${g.itens.map((p) => {
-    const foto = p.img
-      ? `<img class="photo" src="assets/${p.img}.jpg" alt="${p.nome}" width="400" height="400" loading="lazy">`
-      : `<div class="photo art"></div>`;
-    const linhas = p.variantes.map((v) => `
-      <div class="variant" data-key="${key(p, v)}">
-        <span class="vlabel">${v.label ? `<span>${v.label}</span>` : ""}<b>${v.price == null ? "consulte" : brl(v.price)}</b></span>
-        <div class="qty" role="group" aria-label="Quantidade de ${p.nome} ${v.label || ""}">
+function cardHtml(p) {
+  const src = imgSrc(p);
+  const foto = src
+    ? `<img class="photo" src="${esc(src)}" alt="${esc(p.nome)}" width="400" height="400" loading="lazy">`
+    : `<div class="photo art"><span>🍪</span></div>`;
+  const selos = [p.destaque && "⭐ Destaque", p.novo && "🆕 Novo"].filter(Boolean).map((t) => `<span class="badge">${t}</span>`).join("");
+  const vars = variantesDe(p);
+  const linhas = p.esgotado ? `<p class="soldout">Esgotado por enquanto</p>` : vars.map((v) => `
+      <div class="variant" data-key="${esc(key(p, v))}">
+        <span class="vlabel">${v.label ? `<span>${esc(v.label)}</span>` : ""}<b>${v.price == null ? "consulte" : brl(v.price)}</b></span>
+        <div class="qty" role="group" aria-label="Quantidade de ${esc(p.nome)} ${esc(v.label || "")}">
           <button type="button" data-d="-1" aria-label="Diminuir">−</button>
           <output>0</output>
           <button type="button" data-d="1" aria-label="Aumentar">+</button>
         </div>
       </div>`).join("");
-    return `<article class="card reveal" data-p="${p.nome}">${foto}<h3>${p.nome}</h3><p>${p.desc}</p>
-      <div class="variants${p.variantes.length === 1 ? " single" : ""}">${linhas}</div></article>`;
-  }).join("")}</div>`).join("");
+  return `<article class="card${p.esgotado ? " esgotado" : ""}" data-p="${esc(p.nome)}">
+    ${selos ? `<div class="badges">${selos}</div>` : ""}${foto}<h3>${esc(p.nome)}</h3><p>${esc(p.desc)}</p>
+    <div class="variants${vars.length === 1 ? " single" : ""}">${linhas}</div></article>`;
+}
+
+function construirMenu() {
+  const ativos = produtos.filter((p) => p.ativo !== false).sort((a, b) => (a.ordem ?? 999) - (b.ordem ?? 999));
+  const blocos = [];
+  const destaques = ativos.filter((p) => p.destaque && !p.esgotado);
+  if (destaques.length) blocos.push(["⭐ Destaques", destaques]);
+  const grupos = new Map();
+  ativos.forEach((p) => { const t = p.categoria || "Outros"; if (!grupos.has(t)) grupos.set(t, []); grupos.get(t).push(p); });
+  grupos.forEach((l, t) => blocos.push([t, l]));
+  $("menu").innerHTML = blocos.map(([t, l]) => `<h3 class="group">${esc(t)}</h3><div class="cards">${l.map(cardHtml).join("")}</div>`).join("");
+}
+
+function sincronizar() {
+  const novo = {};
+  produtos.filter((p) => p.ativo !== false && !p.esgotado).forEach((p) =>
+    variantesDe(p).forEach((v) => {
+      const k = key(p, v);
+      novo[k] = { nome: p.nome, label: v.label || "", price: v.price ?? null, n: qtd[k]?.n ?? contagemSalva[k] ?? 0 };
+    }));
+  Object.keys(qtd).forEach((k) => delete qtd[k]);
+  Object.assign(qtd, novo);
+}
+
+function atualizarProdutos(lista) {
+  produtos = lista;
+  sincronizar();
+  construirMenu();
+  render();
+}
 
 // Estado do pedido (lembrado no navegador)
 const STORE = "docemomento-carrinho-v1";
@@ -80,7 +81,7 @@ function carregar() {
   try {
     const d = JSON.parse(localStorage.getItem(STORE) || "null");
     if (!d) return;
-    Object.entries(d.qtd || {}).forEach(([k, n]) => { if (qtd[k]) qtd[k].n = Math.max(0, Number(n) || 0); });
+    contagemSalva = d.qtd || {};
     estado.tipo = d.tipo === "retirada" ? "retirada" : "entrega";
     estado.nome = String(d.nome || ""); estado.end = String(d.end || ""); estado.obs = String(d.obs || "");
   } catch {}
@@ -121,7 +122,7 @@ function render() {
   $("clear").hidden = vazio;
   $("lines").innerHTML = linhas.map(([k, l]) => `
     <li data-key="${k}">
-      <div class="ln"><span>${l.nome}${l.label ? ` <small>${l.label}</small>` : ""}</span>
+      <div class="ln"><span>${esc(l.nome)}${l.label ? ` <small>${esc(l.label)}</small>` : ""}</span>
         <b>${l.price == null ? "consultar" : brl(l.price * l.n)}</b></div>
       <div class="qty sm"><button type="button" data-d="-1" aria-label="Diminuir">−</button><output>${l.n}</output><button type="button" data-d="1" aria-label="Aumentar">+</button></div>
     </li>`).join("");
@@ -189,7 +190,8 @@ $("closeCart").addEventListener("click", fechar);
 $("overlay").addEventListener("click", fechar);
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("drawer").hidden) fechar(); });
 
-render();
+atualizarProdutos(produtos);
+DM.conectar().then((a) => a && a.ouvirProdutos((l) => { if (l.length) atualizarProdutos(l); }, () => {}));
 
 // Animação ao rolar
 const io = "IntersectionObserver" in window
