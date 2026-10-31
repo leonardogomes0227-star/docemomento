@@ -95,13 +95,16 @@ function render() {
   document.querySelectorAll(".card[data-p]").forEach((c) =>
     c.classList.toggle("selected", linhas.some((l) => l.nome === c.dataset.p)));
 
-  const obs = $("obs").value.trim();
+  const nome = $("nome").value.trim(), end = $("end").value.trim(), obs = $("obs").value.trim();
   const msg = [
-    "Oi! Vim pelo site e quero fazer este pedido 🍪", "",
-    ...linhas.map((l) => `• ${l.n}x ${l.nome}${l.label ? ` (${l.label})` : ""} — ${l.price == null ? "valor a consultar" : brl(l.price * l.n)}`), "",
-    `Subtotal: ${brl(total)}`, `Entrega: ${brl(TAXA_ENTREGA)}`, `Total: ${brl(total + TAXA_ENTREGA)}`,
-    ...(consultar.length ? [`(+ itens a consultar: ${[...new Set(consultar.map((l) => l.nome))].join(", ")})`] : []),
-    ...(obs ? ["", `Observações: ${obs}`] : []),
+    "Olá! Quero fazer um pedido pelo site 🍪", "",
+    `*Nome:* ${nome || "-"}`,
+    `*Endereço de entrega:* ${end || "-"}`, "",
+    "*Pedido:*",
+    ...linhas.map((l) => `• ${l.n}x ${l.nome}${l.label ? ` (${l.label})` : ""} — ${l.price == null ? "valor a confirmar" : brl(l.price * l.n)}`), "",
+    `Subtotal: ${brl(total)}`, `Taxa de entrega: ${brl(TAXA_ENTREGA)}`, `*Total: ${brl(total + TAXA_ENTREGA)}*`,
+    ...(consultar.length ? [`(sem contar: ${[...new Set(consultar.map((l) => l.nome))].join(", ")}, valor a confirmar)`] : []),
+    ...(obs ? ["", `*Observações:* ${obs}`] : []),
   ].join("\n");
   $("send").href = wa(msg);
 }
@@ -118,7 +121,11 @@ $("menu").addEventListener("click", (e) => {
   row.querySelector("output").textContent = l.n;
   render();
 });
-$("obs").addEventListener("input", render);
+["nome", "end", "obs"].forEach((id) => $(id).addEventListener("input", () => { $("hint").hidden = true; render(); }));
+$("send").addEventListener("click", (e) => {
+  const falta = ["nome", "end"].find((id) => !$(id).value.trim());
+  if (falta) { e.preventDefault(); $("hint").hidden = false; $(falta).focus(); }
+});
 render();
 
 // Animação ao rolar

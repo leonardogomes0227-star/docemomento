@@ -90,8 +90,13 @@
         <div class="tot"><dt>Total</dt><dd id="tot"></dd></div>
       </dl>
       <p class="small" id="consulta" hidden>Itens marcados como "consultar" ficam fora do total. Confirmamos o valor no WhatsApp.</p>
+      <label for="nome">Seu nome</label>
+      <input id="nome" type="text" autocomplete="name" placeholder="Como podemos te chamar?">
+      <label for="end">Endereço de entrega</label>
+      <input id="end" type="text" autocomplete="street-address" placeholder="Rua, número, bairro">
       <label for="obs">Observações ou adicionais</label>
       <textarea id="obs" rows="3" placeholder="Escreva aqui observações ou adicionais para o seu pedido."></textarea>
+      <p class="hint" id="hint" hidden>Preencha seu nome e o endereço de entrega para enviar o pedido.</p>
       <a class="btn" id="send" href="#" target="_blank" rel="noopener" hidden>Enviar pedido no WhatsApp</a>
     </div>
 
