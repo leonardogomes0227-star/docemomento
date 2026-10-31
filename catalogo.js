@@ -266,7 +266,7 @@ window.CATALOGO = [
     "id": "empada-de-frango",
     "nome": "Empada de frango",
     "categoria": "🥟 Salgados",
-    "desc": "Massa leve e delicada, com recheio cremoso de frango bem temperadinho.",
+    "desc": "Massa leve e delicada, com recheio cremoso de frango bem temperadinho. Valor por unidade.",
     "img": "empada-de-frango",
     "variantes": [
       {

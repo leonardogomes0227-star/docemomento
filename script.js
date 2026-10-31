@@ -3,6 +3,10 @@ document.documentElement.classList.add("js");
 // Número do WhatsApp (DDI + DDD + número, só dígitos)
 const WHATSAPP = "5566999610260";
 const TAXA_ENTREGA = 3;
+const RETIRADA = { endereco: "Rua Porfírio Gonçalves, 441, Centro", horario: "das 18:00 às 21:30" };
+// Adicionais cobrados por unidade, escolhidos no carrinho. Não valem para salgados.
+const ADICIONAIS = [{ id: "nutella", nome: "Nutella", price: 5 }, { id: "kinder", nome: "Kinder", price: 5 }];
+const SEM_ADICIONAL = /salgad/i;
 
 const brl = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const wa = (text) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
@@ -14,12 +18,14 @@ document.querySelectorAll("[data-wa]").forEach((a) => {
   a.rel = "noopener";
 });
 $("ano").textContent = new Date().getFullYear();
+$("retNote").textContent = `Retire em ${RETIRADA.endereco}, ${RETIRADA.horario}.`;
 
 // Cardápio: vem do Supabase (painel da Ana) e, sem ele, de catalogo.js
 const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 let produtos = CATALOGO.map((p) => ({ ...p }));
 const qtd = {}; // chave "produto|variante" -> { nome, label, price, n }
 let contagemSalva = {};
+let adSalvo = {};
 const key = (p, v) => `${p.nome}|${v.label || ""}`;
 const variantesDe = (p) => (p.variantes && p.variantes.length ? p.variantes : [{ price: null }]);
 const imgSrc = (p) => (!p.img ? "" : /^(data:|https?:)/.test(p.img) ? p.img : `assets/${p.img}.webp`);
@@ -75,10 +81,12 @@ function sincronizar() {
   produtos.filter((p) => p.ativo !== false && !p.esgotado).forEach((p) =>
     variantesDe(p).forEach((v) => {
       const k = key(p, v);
-      novo[k] = { nome: p.nome, label: v.label || "", price: v.price ?? null, n: qtd[k]?.n ?? contagemSalva[k] ?? 0 };
+      novo[k] = { nome: p.nome, cat: p.categoria || "", label: v.label || "", price: v.price ?? null,
+        n: qtd[k]?.n ?? contagemSalva[k] ?? 0, ad: { ...(qtd[k]?.ad ?? adSalvo[k] ?? {}) } };
     }));
   Object.keys(qtd).forEach((k) => delete qtd[k]);
   Object.assign(qtd, novo);
+  Object.values(qtd).forEach(ajustarAd);
 }
 
 function atualizarProdutos(lista) {
@@ -96,6 +104,7 @@ function carregar() {
     const d = JSON.parse(localStorage.getItem(STORE) || "null");
     if (!d) return;
     contagemSalva = d.qtd || {};
+    adSalvo = d.ad || {};
     estado.tipo = d.tipo === "retirada" ? "retirada" : "entrega";
     estado.nome = String(d.nome || ""); estado.end = String(d.end || ""); estado.obs = String(d.obs || "");
   } catch {}
@@ -103,14 +112,20 @@ function carregar() {
 function salvar() {
   try {
     const q = Object.fromEntries(Object.entries(qtd).filter(([, l]) => l.n > 0).map(([k, l]) => [k, l.n]));
-    localStorage.setItem(STORE, JSON.stringify({ qtd: q, ...estado }));
+    const ad = Object.fromEntries(Object.entries(qtd).filter(([, l]) => l.n > 0).map(([k, l]) => [k, l.ad]));
+    localStorage.setItem(STORE, JSON.stringify({ qtd: q, ad, ...estado }));
   } catch {}
 }
+
+const temAd = (l) => !SEM_ADICIONAL.test(l.cat);
+const adTotal = (l) => ADICIONAIS.reduce((t, a) => t + (l.ad[a.id] || 0) * a.price, 0);
+const totalLinha = (l) => (l.price || 0) * l.n + adTotal(l);
+function ajustarAd(l) { ADICIONAIS.forEach((a) => { if (l.ad[a.id]) l.ad[a.id] = Math.min(l.ad[a.id], l.n); }); }
 
 function render() {
   const linhas = Object.entries(qtd).filter(([, l]) => l.n > 0);
   const itens = linhas.reduce((s, [, l]) => s + l.n, 0);
-  const sub = linhas.reduce((s, [, l]) => s + (l.price || 0) * l.n, 0);
+  const sub = linhas.reduce((s, [, l]) => s + totalLinha(l), 0);
   const entrega = estado.tipo === "entrega";
   const taxa = entrega && itens ? TAXA_ENTREGA : 0;
   const total = sub + taxa;
@@ -135,10 +150,14 @@ function render() {
   $("empty").hidden = !vazio;
   $("clear").hidden = vazio;
   $("lines").innerHTML = linhas.map(([k, l]) => `
-    <li data-key="${k}">
+    <li data-key="${esc(k)}">
       <div class="ln"><span>${esc(l.nome)}${l.label ? ` <small>${esc(l.label)}</small>` : ""}</span>
         <b>${l.price == null ? "consultar" : brl(l.price * l.n)}</b></div>
       <div class="qty sm"><button type="button" data-d="-1" aria-label="Diminuir">−</button><output>${l.n}</output><button type="button" data-d="1" aria-label="Aumentar">+</button></div>
+      ${temAd(l) ? `<div class="ads"><small>Adicionais (por unidade)</small>${ADICIONAIS.map((a) => `
+        <div class="ad" data-ad="${a.id}"><span>${a.nome} <b>+${brl(a.price)}</b></span>
+          <div class="qty sm"><button type="button" data-ad-d="-1" aria-label="Menos ${a.nome}">−</button><output>${l.ad[a.id] || 0}</output><button type="button" data-ad-d="1" aria-label="Mais ${a.nome}">+</button></div>
+        </div>`).join("")}</div>` : ""}
     </li>`).join("");
   $("sub").textContent = brl(sub);
   $("taxaLabel").textContent = entrega ? "Taxa de entrega" : "Retirada";
@@ -152,10 +171,13 @@ function render() {
   const msg = [
     "Olá! Quero fazer um pedido pelo site 🍪", "",
     `*Nome:* ${estado.nome.trim() || "-"}`,
-    entrega ? `*Recebimento:* Entrega (taxa ${brl(TAXA_ENTREGA)})` : "*Recebimento:* Retirada",
+    entrega ? `*Recebimento:* Entrega (taxa ${brl(TAXA_ENTREGA)})` : `*Recebimento:* Retirada (${RETIRADA.endereco}, ${RETIRADA.horario})`,
     ...(entrega ? [`*Endereço:* ${estado.end.trim() || "-"}`] : []), "",
     "*Pedido:*",
-    ...linhas.map(([, l]) => `• ${l.n}x ${l.nome}${l.label ? ` (${l.label})` : ""} — ${l.price == null ? "valor a confirmar" : brl(l.price * l.n)}`), "",
+    ...linhas.flatMap(([, l]) => [
+      `• ${l.n}x ${l.nome}${l.label ? ` (${l.label})` : ""} — ${l.price == null ? "valor a confirmar" : brl(l.price * l.n)}`,
+      ...ADICIONAIS.filter((a) => l.ad[a.id]).map((a) => `   + ${l.ad[a.id]}x adicional de ${a.nome} — ${brl(l.ad[a.id] * a.price)}`),
+    ]), "",
     `Subtotal: ${brl(sub)}`,
     entrega ? `Taxa de entrega: ${brl(taxa)}` : "Retirada: sem taxa",
     `*Total: ${brl(total)}*`,
@@ -166,16 +188,21 @@ function render() {
   salvar();
 }
 
-function mudar(k, d) { qtd[k].n = Math.max(0, qtd[k].n + d); render(); }
+function mudar(k, d) { const l = qtd[k]; l.n = Math.max(0, l.n + d); ajustarAd(l); render(); }
+function mudarAd(k, id, d) { const l = qtd[k]; l.ad[id] = Math.max(0, Math.min(l.n, (l.ad[id] || 0) + d)); render(); }
 $("menu").addEventListener("click", (e) => {
   const b = e.target.closest(".qty button");
   if (b) mudar(b.closest(".variant").dataset.key, Number(b.dataset.d));
 });
 $("lines").addEventListener("click", (e) => {
+  const li = e.target.closest("li");
+  if (!li) return;
+  const ad = e.target.closest("[data-ad-d]");
+  if (ad) return mudarAd(li.dataset.key, ad.closest(".ad").dataset.ad, Number(ad.dataset.adD));
   const b = e.target.closest(".qty button");
-  if (b) mudar(b.closest("li").dataset.key, Number(b.dataset.d));
+  if (b) mudar(li.dataset.key, Number(b.dataset.d));
 });
-$("clear").addEventListener("click", () => { Object.values(qtd).forEach((l) => (l.n = 0)); render(); });
+$("clear").addEventListener("click", () => { Object.values(qtd).forEach((l) => { l.n = 0; l.ad = {}; }); render(); });
 
 // Formulário
 carregar();
