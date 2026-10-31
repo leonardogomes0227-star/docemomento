@@ -233,3 +233,6 @@ body.lock { overflow: hidden; }
 .card.esgotado { opacity: .65; }
 .card.esgotado .photo { filter: grayscale(1); }
 .soldout { font-weight: 800; color: var(--brown-soft); padding: 12px 0; }
+
+footer .adm { display: inline-block; margin-top: 8px; color: var(--cream); opacity: .6; font-size: .8rem; text-decoration: underline; }
+footer .adm:hover { opacity: 1; }
