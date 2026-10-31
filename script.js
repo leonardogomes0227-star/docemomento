@@ -15,8 +15,8 @@ document.querySelectorAll("[data-wa]").forEach((a) => {
 });
 $("ano").textContent = new Date().getFullYear();
 
-// Cardápio: vem do Firebase (painel da Ana) e, sem ele, de catalogo.js
-const { esc } = DM;
+// Cardápio: vem de catalogo.js
+const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 let produtos = CATALOGO.map((p) => ({ ...p }));
 const qtd = {}; // chave "produto|variante" -> { nome, label, price, n }
 let contagemSalva = {};
@@ -191,7 +191,6 @@ $("overlay").addEventListener("click", fechar);
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("drawer").hidden) fechar(); });
 
 atualizarProdutos(produtos);
-DM.conectar().then((a) => a && a.ouvirProdutos((l) => { if (l.length) atualizarProdutos(l); }, () => {}));
 
 // Animação ao rolar
 const io = "IntersectionObserver" in window
