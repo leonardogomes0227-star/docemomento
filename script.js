@@ -53,7 +53,21 @@ function construirMenu() {
   const grupos = new Map();
   ativos.forEach((p) => { const t = p.categoria || "Outros"; if (!grupos.has(t)) grupos.set(t, []); grupos.get(t).push(p); });
   grupos.forEach((l, t) => blocos.push([t, l]));
-  $("menu").innerHTML = blocos.map(([t, l]) => `<h3 class="group">${esc(t)}</h3><div class="cards">${l.map(cardHtml).join("")}</div>`).join("");
+  const chips = `<nav class="chips" aria-label="Categorias do cardápio">${blocos.map(([t], i) => `<a href="#g${i}">${esc(t)}</a>`).join("")}</nav>`;
+  $("menu").innerHTML = chips + blocos.map(([t, l], i) => `<h3 class="group" id="g${i}">${esc(t)}</h3><div class="cards">${l.map(cardHtml).join("")}</div>`).join("");
+  destacarChip();
+}
+
+// Marca na barra de categorias a seção que está na tela
+let obsChips;
+function destacarChip() {
+  if (!("IntersectionObserver" in window)) return;
+  obsChips && obsChips.disconnect();
+  obsChips = new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return;
+    document.querySelectorAll(".chips a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id));
+  }), { rootMargin: "-35% 0px -60% 0px" });
+  document.querySelectorAll(".group").forEach((g) => obsChips.observe(g));
 }
 
 function sincronizar() {
