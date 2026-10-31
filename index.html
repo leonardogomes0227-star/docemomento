@@ -28,7 +28,8 @@
     <a href="#cardapio">Cardápio</a>
     <a href="#diferenciais">Diferenciais</a>
     <a href="#duvidas">Dúvidas</a>
-    <a class="btn btn-sm" href="#cardapio">Montar pedido</a>
+    <a class="btn btn-sm" href="#cardapio">Ver cardápio</a>
+    <button class="cart-btn" id="openCart" type="button" aria-label="Abrir carrinho">🛍️<span id="badge" hidden>0</span></button>
   </nav>
 </header>
 
@@ -79,26 +80,6 @@
     <p class="sub reveal">Escolha as quantidades, confira o total e envie pelo WhatsApp. Seu pedido já vai prontinho na conversa!</p>
 
     <div id="menu"></div>
-
-    <div id="pedido" class="checkout">
-      <h3>🛍️ Seu pedido</h3>
-      <p class="empty" id="empty">Seu pedido está vazio. Escolha seus doces acima!</p>
-      <ul id="lines"></ul>
-      <dl class="sum" id="sum" hidden>
-        <div><dt>Subtotal</dt><dd id="sub"></dd></div>
-        <div><dt>Taxa de entrega</dt><dd>R$ 3,00</dd></div>
-        <div class="tot"><dt>Total</dt><dd id="tot"></dd></div>
-      </dl>
-      <p class="small" id="consulta" hidden>Itens marcados como "consultar" ficam fora do total. Confirmamos o valor no WhatsApp.</p>
-      <label for="nome">Seu nome</label>
-      <input id="nome" type="text" autocomplete="name" placeholder="Como podemos te chamar?">
-      <label for="end">Endereço de entrega</label>
-      <input id="end" type="text" autocomplete="street-address" placeholder="Rua, número, bairro">
-      <label for="obs">Observações ou adicionais</label>
-      <textarea id="obs" rows="3" placeholder="Escreva aqui observações ou adicionais para o seu pedido."></textarea>
-      <p class="hint" id="hint" hidden>Preencha seu nome e o endereço de entrega para enviar o pedido.</p>
-      <a class="btn" id="send" href="#" target="_blank" rel="noopener" hidden>Enviar pedido no WhatsApp</a>
-    </div>
 
     <p class="note reveal">💌 Quer encomendar para festa, presente ou lembrancinha? <a class="link" href="#" data-wa="Oi! Quero fazer uma encomenda especial 🎁">Fale com a gente</a></p>
   </section>
@@ -157,13 +138,52 @@
 
 <!-- Barra do pedido -->
 <div class="cart" id="cart" hidden>
-  <div><strong id="cartCount">0</strong> item(ns) · <strong id="cartTotal"></strong><small>com taxa de entrega</small></div>
-  <a class="btn btn-sm btn-white" href="#pedido">Finalizar</a>
+  <div><strong id="cartCount">0</strong> item(ns) · <strong id="cartTotal"></strong><small id="cartSub"></small></div>
+  <button class="btn btn-sm btn-white" id="barOpen" type="button">Ver carrinho</button>
 </div>
 
 <a class="wa-float" href="#" data-wa="Oi! Vim pelo site e quero fazer um pedido 🍪" aria-label="Pedir pelo WhatsApp">
   <svg viewBox="0 0 24 24" width="28" height="28" fill="#fff" aria-hidden="true"><path d="M12 2C6.500 2 2 6.200 2 11.500c0 2 .7 3.900 1.900 5.400L3 21.500l4.800-1.700c1.300.6 2.700.9 4.200.9 5.500 0 10-4.200 10-9.500S17.500 2 12 2zm-3 6h1.500l1 2.500-1 1c.7 1.300 1.700 2.300 3 3l1-1 2.500 1V16c-.5.600-1.300 1-2.200 1C10.800 17 7 13.200 7 9.700 7 9 8 8 9 8z"/></svg>
 </a>
+
+<div class="overlay" id="overlay" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle" hidden>
+  <header>
+    <h3 id="dTitle">🛍️ Seu carrinho</h3>
+    <button type="button" id="closeCart" aria-label="Fechar carrinho">✕</button>
+  </header>
+  <div class="dbody">
+    <p class="empty" id="empty">Seu carrinho está vazio. Escolha seus doces no cardápio!</p>
+    <ul id="lines"></ul>
+    <button type="button" class="link-btn" id="clear" hidden>Esvaziar carrinho</button>
+
+    <fieldset class="tipo" id="tipo">
+      <legend>Como você prefere receber?</legend>
+      <label><input type="radio" name="tipo" value="entrega" checked><span>🛵 Entrega<small>+ R$ 3,00</small></span></label>
+      <label><input type="radio" name="tipo" value="retirada"><span>🏪 Retirada<small>sem taxa</small></span></label>
+    </fieldset>
+
+    <label for="nome">Seu nome</label>
+    <input id="nome" type="text" autocomplete="name" placeholder="Como podemos te chamar?">
+    <div id="endWrap">
+      <label for="end">Endereço de entrega</label>
+      <input id="end" type="text" autocomplete="street-address" placeholder="Rua, número, bairro">
+    </div>
+    <p class="small" id="retNote" hidden>Combinamos o local e o horário da retirada pelo WhatsApp.</p>
+    <label for="obs">Observações ou adicionais</label>
+    <textarea id="obs" rows="3" placeholder="Escreva aqui observações ou adicionais para o seu pedido."></textarea>
+  </div>
+  <footer>
+    <dl class="sum" id="sum">
+      <div><dt>Subtotal</dt><dd id="sub"></dd></div>
+      <div><dt id="taxaLabel">Taxa de entrega</dt><dd id="taxa"></dd></div>
+      <div class="tot"><dt>Total</dt><dd id="tot"></dd></div>
+    </dl>
+    <p class="small" id="consulta" hidden>Itens "a consultar" ficam fora do total. Confirmamos o valor no WhatsApp.</p>
+    <p class="hint" id="hint" hidden></p>
+    <a class="btn" id="send" href="#" target="_blank" rel="noopener">Enviar pedido no WhatsApp</a>
+  </footer>
+</aside>
 
 <script src="script.js"></script>
 </body>

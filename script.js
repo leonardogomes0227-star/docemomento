@@ -10,6 +10,7 @@ const MASSAS = (price) => [
   { label: "Massa tradicional", price },
   { label: "Massa black", price },
 ];
+const EMPADA = `<svg viewBox="0 0 120 120" role="img" aria-label="Empada de frango"><ellipse cx="60" cy="100" rx="40" ry="8" fill="#f1c3ca"/><path d="M16 72Q16 36 60 36t44 36l-6 20Q60 104 22 92z" fill="#d9993f"/><path d="M18 64Q20 38 60 38t42 26Q60 76 18 64z" fill="#f0c27a"/><path d="M22 91Q60 103 98 91" fill="none" stroke="#b9733f" stroke-width="5" stroke-dasharray="2 8" stroke-linecap="round"/><ellipse cx="60" cy="52" rx="6" ry="3.500" fill="#b9733f"/><path d="M48 28q-5-7 0-13M60 26q-5-7 0-13M72 28q-5-7 0-13" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>`;
 const PRODUTOS = [
   { titulo: "🍪 Cookies", itens: [
     { nome: "Cookie tradicional", img: "cookie-massa-black", desc: "Cookie clássico com gotas de chocolate. Escolha a massa: tradicional ou black.", variantes: MASSAS(8) },
@@ -33,7 +34,7 @@ const PRODUTOS = [
     { nome: "Brookie", img: "brookie", desc: "A união perfeita entre brownie e cookie, trazendo duas texturas deliciosas em uma só sobremesa.", variantes: [{ label: "Tradicional", price: 15 }, { label: "Com Nutella", price: 18 }] },
   ]},
   { titulo: "🥟 Salgados", itens: [
-    { nome: "Empada de frango", emoji: "🥟", desc: "Massa leve e delicada, com recheio cremoso de frango bem temperadinho.", variantes: [{ price: 28 }] },
+    { nome: "Empada de frango", svg: EMPADA, desc: "Massa leve e delicada, com recheio cremoso de frango bem temperadinho.", variantes: [{ price: 28 }] },
   ]},
 ];
 
@@ -50,15 +51,18 @@ $("ano").textContent = new Date().getFullYear();
 
 // Monta o cardápio
 const qtd = {}; // chave "produto|variante" -> { nome, label, price, n }
-const html = PRODUTOS.map((g) => `
+const key = (p, v) => `${p.nome}|${v.label || ""}`;
+PRODUTOS.flatMap((g) => g.itens).forEach((p) =>
+  p.variantes.forEach((v) => (qtd[key(p, v)] = { nome: p.nome, label: v.label || "", price: v.price ?? null, n: 0 })));
+
+$("menu").innerHTML = PRODUTOS.map((g) => `
   <h3 class="group reveal">${g.titulo}</h3>
-  <div class="cards">${g.itens.map((p, pi) => {
+  <div class="cards">${g.itens.map((p) => {
     const foto = p.img
       ? `<img class="photo" src="assets/${p.img}.jpg" alt="${p.nome}" width="400" height="400" loading="lazy">`
-      : `<div class="photo art" aria-hidden="true"><span>${p.emoji}</span></div>`;
-    const unico = p.variantes.length === 1;
-    const linhas = p.variantes.map((v, vi) => `
-      <div class="variant" data-key="${p.nome}|${v.label || ""}">
+      : `<div class="photo art">${p.svg}</div>`;
+    const linhas = p.variantes.map((v) => `
+      <div class="variant" data-key="${key(p, v)}">
         <span class="vlabel">${v.label ? `<span>${v.label}</span>` : ""}<b>${v.price == null ? "consulte" : brl(v.price)}</b></span>
         <div class="qty" role="group" aria-label="Quantidade de ${p.nome} ${v.label || ""}">
           <button type="button" data-d="-1" aria-label="Diminuir">−</button>
@@ -66,66 +70,126 @@ const html = PRODUTOS.map((g) => `
           <button type="button" data-d="1" aria-label="Aumentar">+</button>
         </div>
       </div>`).join("");
-    return `<article class="card reveal" data-p="${p.nome}">
-      ${foto}<h3>${p.nome}</h3><p>${p.desc}</p><div class="variants${unico ? " single" : ""}">${linhas}</div></article>`;
+    return `<article class="card reveal" data-p="${p.nome}">${foto}<h3>${p.nome}</h3><p>${p.desc}</p>
+      <div class="variants${p.variantes.length === 1 ? " single" : ""}">${linhas}</div></article>`;
   }).join("")}</div>`).join("");
-$("menu").innerHTML = html;
 
-// Pedido
-function render() {
-  const linhas = Object.values(qtd).filter((l) => l.n > 0);
-  const total = linhas.reduce((s, l) => s + (l.price || 0) * l.n, 0);
-  const itens = linhas.reduce((s, l) => s + l.n, 0);
-  const consultar = linhas.filter((l) => l.price == null);
-  const vazio = itens === 0;
-
-  document.body.classList.toggle("has-cart", !vazio);
-  $("cart").hidden = vazio;
-  $("cartCount").textContent = itens;
-  $("cartTotal").textContent = brl(total + TAXA_ENTREGA);
-  $("empty").hidden = !vazio;
-  $("sum").hidden = vazio;
-  $("send").hidden = vazio;
-  $("lines").innerHTML = linhas.map((l) =>
-    `<li><span>${l.n}x ${l.nome}${l.label ? ` <small>(${l.label})</small>` : ""}</span><b>${l.price == null ? "consultar" : brl(l.price * l.n)}</b></li>`).join("");
-  $("sub").textContent = brl(total);
-  $("tot").textContent = brl(total + TAXA_ENTREGA);
-  $("consulta").hidden = consultar.length === 0;
-
-  document.querySelectorAll(".card[data-p]").forEach((c) =>
-    c.classList.toggle("selected", linhas.some((l) => l.nome === c.dataset.p)));
-
-  const nome = $("nome").value.trim(), end = $("end").value.trim(), obs = $("obs").value.trim();
-  const msg = [
-    "Olá! Quero fazer um pedido pelo site 🍪", "",
-    `*Nome:* ${nome || "-"}`,
-    `*Endereço de entrega:* ${end || "-"}`, "",
-    "*Pedido:*",
-    ...linhas.map((l) => `• ${l.n}x ${l.nome}${l.label ? ` (${l.label})` : ""} — ${l.price == null ? "valor a confirmar" : brl(l.price * l.n)}`), "",
-    `Subtotal: ${brl(total)}`, `Taxa de entrega: ${brl(TAXA_ENTREGA)}`, `*Total: ${brl(total + TAXA_ENTREGA)}*`,
-    ...(consultar.length ? [`(sem contar: ${[...new Set(consultar.map((l) => l.nome))].join(", ")}, valor a confirmar)`] : []),
-    ...(obs ? ["", `*Observações:* ${obs}`] : []),
-  ].join("\n");
-  $("send").href = wa(msg);
+// Estado do pedido (lembrado no navegador)
+const STORE = "docemomento-carrinho-v1";
+const estado = { tipo: "entrega", nome: "", end: "", obs: "" };
+function carregar() {
+  try {
+    const d = JSON.parse(localStorage.getItem(STORE) || "null");
+    if (!d) return;
+    Object.entries(d.qtd || {}).forEach(([k, n]) => { if (qtd[k]) qtd[k].n = Math.max(0, Number(n) || 0); });
+    estado.tipo = d.tipo === "retirada" ? "retirada" : "entrega";
+    estado.nome = String(d.nome || ""); estado.end = String(d.end || ""); estado.obs = String(d.obs || "");
+  } catch {}
+}
+function salvar() {
+  try {
+    const q = Object.fromEntries(Object.entries(qtd).filter(([, l]) => l.n > 0).map(([k, l]) => [k, l.n]));
+    localStorage.setItem(STORE, JSON.stringify({ qtd: q, ...estado }));
+  } catch {}
 }
 
-PRODUTOS.flatMap((g) => g.itens).forEach((p) =>
-  p.variantes.forEach((v) => (qtd[`${p.nome}|${v.label || ""}`] = { nome: p.nome, label: v.label || "", price: v.price ?? null, n: 0 })));
+function render() {
+  const linhas = Object.entries(qtd).filter(([, l]) => l.n > 0);
+  const itens = linhas.reduce((s, [, l]) => s + l.n, 0);
+  const sub = linhas.reduce((s, [, l]) => s + (l.price || 0) * l.n, 0);
+  const entrega = estado.tipo === "entrega";
+  const taxa = entrega && itens ? TAXA_ENTREGA : 0;
+  const total = sub + taxa;
+  const consultar = [...new Set(linhas.filter(([, l]) => l.price == null).map(([, l]) => l.nome))];
+  const vazio = itens === 0;
 
+  // cartões do cardápio
+  document.querySelectorAll(".variant").forEach((r) => { r.querySelector("output").textContent = qtd[r.dataset.key].n; });
+  document.querySelectorAll(".card[data-p]").forEach((c) =>
+    c.classList.toggle("selected", linhas.some(([, l]) => l.nome === c.dataset.p)));
+
+  // contadores
+  document.body.classList.toggle("has-cart", !vazio);
+  $("cart").hidden = vazio;
+  $("badge").hidden = vazio;
+  $("badge").textContent = itens;
+  $("cartCount").textContent = itens;
+  $("cartTotal").textContent = brl(total);
+  $("cartSub").textContent = entrega ? "com taxa de entrega" : "retirada, sem taxa";
+
+  // gaveta
+  $("empty").hidden = !vazio;
+  $("clear").hidden = vazio;
+  $("lines").innerHTML = linhas.map(([k, l]) => `
+    <li data-key="${k}">
+      <div class="ln"><span>${l.nome}${l.label ? ` <small>${l.label}</small>` : ""}</span>
+        <b>${l.price == null ? "consultar" : brl(l.price * l.n)}</b></div>
+      <div class="qty sm"><button type="button" data-d="-1" aria-label="Diminuir">−</button><output>${l.n}</output><button type="button" data-d="1" aria-label="Aumentar">+</button></div>
+    </li>`).join("");
+  $("sub").textContent = brl(sub);
+  $("taxaLabel").textContent = entrega ? "Taxa de entrega" : "Retirada";
+  $("taxa").textContent = entrega ? brl(taxa) : "sem taxa";
+  $("tot").textContent = brl(total);
+  $("consulta").hidden = consultar.length === 0;
+  $("endWrap").hidden = !entrega;
+  $("retNote").hidden = entrega;
+  $("send").classList.toggle("off", vazio);
+
+  const msg = [
+    "Olá! Quero fazer um pedido pelo site 🍪", "",
+    `*Nome:* ${estado.nome.trim() || "-"}`,
+    entrega ? `*Recebimento:* Entrega (taxa ${brl(TAXA_ENTREGA)})` : "*Recebimento:* Retirada",
+    ...(entrega ? [`*Endereço:* ${estado.end.trim() || "-"}`] : []), "",
+    "*Pedido:*",
+    ...linhas.map(([, l]) => `• ${l.n}x ${l.nome}${l.label ? ` (${l.label})` : ""} — ${l.price == null ? "valor a confirmar" : brl(l.price * l.n)}`), "",
+    `Subtotal: ${brl(sub)}`,
+    entrega ? `Taxa de entrega: ${brl(taxa)}` : "Retirada: sem taxa",
+    `*Total: ${brl(total)}*`,
+    ...(consultar.length ? [`(sem contar: ${consultar.join(", ")}, valor a confirmar)`] : []),
+    ...(estado.obs.trim() ? ["", `*Observações:* ${estado.obs.trim()}`] : []),
+  ].join("\n");
+  $("send").href = wa(msg);
+  salvar();
+}
+
+function mudar(k, d) { qtd[k].n = Math.max(0, qtd[k].n + d); render(); }
 $("menu").addEventListener("click", (e) => {
   const b = e.target.closest(".qty button");
-  if (!b) return;
-  const row = b.closest(".variant");
-  const l = qtd[row.dataset.key];
-  l.n = Math.max(0, l.n + Number(b.dataset.d));
-  row.querySelector("output").textContent = l.n;
-  render();
+  if (b) mudar(b.closest(".variant").dataset.key, Number(b.dataset.d));
 });
-["nome", "end", "obs"].forEach((id) => $(id).addEventListener("input", () => { $("hint").hidden = true; render(); }));
+$("lines").addEventListener("click", (e) => {
+  const b = e.target.closest(".qty button");
+  if (b) mudar(b.closest("li").dataset.key, Number(b.dataset.d));
+});
+$("clear").addEventListener("click", () => { Object.values(qtd).forEach((l) => (l.n = 0)); render(); });
+
+// Formulário
+carregar();
+$("nome").value = estado.nome; $("end").value = estado.end; $("obs").value = estado.obs;
+document.querySelector(`input[name="tipo"][value="${estado.tipo}"]`).checked = true;
+["nome", "end", "obs"].forEach((id) => $(id).addEventListener("input", () => {
+  estado[id] = $(id).value; $("hint").hidden = true; render();
+}));
+$("tipo").addEventListener("change", (e) => { estado.tipo = e.target.value; $("hint").hidden = true; render(); });
 $("send").addEventListener("click", (e) => {
-  const falta = ["nome", "end"].find((id) => !$(id).value.trim());
-  if (falta) { e.preventDefault(); $("hint").hidden = false; $(falta).focus(); }
+  const itens = Object.values(qtd).some((l) => l.n > 0);
+  const falta = !itens ? null : !estado.nome.trim() ? "nome" : estado.tipo === "entrega" && !estado.end.trim() ? "end" : "";
+  if (falta === "" ) return;
+  e.preventDefault();
+  $("hint").hidden = false;
+  $("hint").textContent = !itens ? "Adicione pelo menos um item ao carrinho."
+    : falta === "nome" ? "Informe seu nome para enviar o pedido." : "Informe o endereço de entrega para enviar o pedido.";
+  if (falta) $(falta).focus();
 });
+
+// Gaveta do carrinho
+const abrir = () => { $("overlay").hidden = false; $("drawer").hidden = false; document.body.classList.add("lock"); $("closeCart").focus(); };
+const fechar = () => { $("overlay").hidden = true; $("drawer").hidden = true; document.body.classList.remove("lock"); };
+["openCart", "barOpen"].forEach((id) => $(id).addEventListener("click", abrir));
+$("closeCart").addEventListener("click", fechar);
+$("overlay").addEventListener("click", fechar);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("drawer").hidden) fechar(); });
+
 render();
 
 // Animação ao rolar
