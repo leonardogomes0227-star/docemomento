@@ -1,4 +1,4 @@
-// Cardápio padrão. É usado quando o Firebase não está configurado e para importar para o painel.
+// Cardápio padrão. É usado quando o banco está fora do ar ou não configurado e para importar para o painel.
 window.CATALOGO = [
   {
     "id": "cookie-tradicional",
@@ -119,11 +119,11 @@ window.CATALOGO = [
     "variantes": [
       {
         "label": "Massa tradicional",
-        "price": null
+        "price": 15
       },
       {
         "label": "Massa black",
-        "price": null
+        "price": 15
       }
     ],
     "destaque": false,
