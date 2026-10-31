@@ -87,8 +87,11 @@ h1 em { color: var(--rose); font-style: normal; background: linear-gradient(tran
 h2 { font-size: clamp(1.7rem, 4vw, 2.5rem); margin: 6px auto 10px; line-height: 1.25; }
 .sub { color: var(--brown-soft); max-width: 560px; margin-bottom: 40px; }
 
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 26px; }
+.cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 26px; }
+.group { margin: 44px auto 22px; font-size: 1.5rem; }
+.group:first-of-type { margin-top: 0; }
 .card {
+  flex: 0 1 320px; width: 100%; min-width: 0;
   position: relative; background: #fff; border-radius: var(--radius); padding: 14px 14px 28px; border: 3px solid transparent;
   box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; gap: 10px; transition: transform .25s, border-color .25s;
 }
