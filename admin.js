@@ -25,11 +25,40 @@
   });
   A.ouvirProdutos((l) => { lista = l; desenhar(); }, (e) => toast("Não foi possível ler os produtos: " + e.message, true));
 
-  // ---- Login
+  // ---- Login: só a senha. O e-mail fixo da loja fica em supabase-config.js.
+  // Trava contra tentativas seguidas: depois de 3 erros espera 30 s, depois 1 min, 5 min e 15 min.
+  const adminEmail = (window.SUPABASE_CONFIG || {}).adminEmail || "";
+  const LK = "dm-admin-bloqueio";
+  const lerBloqueio = () => { try { return JSON.parse(localStorage.getItem(LK)) || { falhas: 0, ate: 0 }; } catch { return { falhas: 0, ate: 0 }; } };
+  const gravarBloqueio = (b) => { try { localStorage.setItem(LK, JSON.stringify(b)); } catch {} };
+  const restante = () => Math.max(0, Math.ceil((lerBloqueio().ate - Date.now()) / 1000));
+  let relogio;
+  function mostrarBloqueio() {
+    clearInterval(relogio);
+    const f = () => {
+      const r = restante();
+      $("entrar").disabled = r > 0;
+      if (r > 0) { $("erroLogin").textContent = `Muitas tentativas. Tente de novo em ${r > 90 ? Math.ceil(r / 60) + " min" : r + " s"}.`; $("erroLogin").hidden = false; }
+      else { clearInterval(relogio); $("erroLogin").hidden = true; }
+    };
+    f();
+    if (restante() > 0) relogio = setInterval(f, 1000);
+  }
+  mostrarBloqueio();
+
   $("formLogin").addEventListener("submit", async (e) => {
-    e.preventDefault(); $("erroLogin").hidden = true;
-    try { await A.login($("email").value.trim(), $("senha").value); }
-    catch { $("erroLogin").textContent = "E-mail ou senha incorretos."; $("erroLogin").hidden = false; }
+    e.preventDefault();
+    if (restante() > 0) return mostrarBloqueio();
+    $("erroLogin").hidden = true;
+    try {
+      await A.login(adminEmail, $("senha").value);
+      gravarBloqueio({ falhas: 0, ate: 0 }); $("senha").value = "";
+    } catch (err) {
+      const b = lerBloqueio(); b.falhas++;
+      const espera = err.status === 429 ? 300 : b.falhas >= 7 ? 900 : [0, 0, 0, 30, 60, 300, 300][b.falhas];
+      b.ate = espera ? Date.now() + espera * 1000 : 0; gravarBloqueio(b);
+      if (espera) mostrarBloqueio(); else { $("erroLogin").textContent = "Senha incorreta."; $("erroLogin").hidden = false; }
+    }
   });
   $("sair").addEventListener("click", () => A.sair());
 

@@ -30,13 +30,12 @@
 
   <section id="login" class="box" hidden>
     <h1>Entrar</h1>
+    <p class="dica">Digite a senha da loja.</p>
     <form id="formLogin">
-      <label for="email">E-mail</label>
-      <input id="email" type="email" autocomplete="username" required>
       <label for="senha">Senha</label>
       <input id="senha" type="password" autocomplete="current-password" required>
       <p class="erro" id="erroLogin" hidden></p>
-      <button class="btn" type="submit">Entrar</button>
+      <button class="btn" type="submit" id="entrar">Entrar</button>
     </form>
   </section>
 
@@ -106,7 +105,7 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-<script src="firebase-config.js"></script>
+<script src="supabase-config.js"></script>
 <script src="catalogo.js"></script>
 <script src="dados.js"></script>
 <script src="admin.js"></script>
