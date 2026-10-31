@@ -89,13 +89,17 @@ h2 { font-size: clamp(1.7rem, 4vw, 2.5rem); margin: 6px auto 10px; line-height: 
 
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 26px; }
 .card {
-  position: relative; background: #fff; border-radius: var(--radius); padding: 34px 22px 28px; border: 3px solid transparent;
+  position: relative; background: #fff; border-radius: var(--radius); padding: 14px 14px 28px; border: 3px solid transparent;
   box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; gap: 10px; transition: transform .25s, border-color .25s;
 }
 .card:hover { transform: translateY(-8px) rotate(-.5deg); }
 .card.selected { border-color: var(--rose); }
+.card h3, .card p, .card .qty { padding-inline: 8px; }
 .card p { color: var(--brown-soft); flex: 1; }
-.badge { position: absolute; top: -14px; background: var(--rose); color: #fff; font-size: .8rem; font-weight: 700; padding: 4px 14px; border-radius: 999px; box-shadow: 0 3px 0 var(--rose-dark); }
+.badge { position: absolute; top: 24px; left: 24px; z-index: 1; background: var(--rose); color: #fff; font-size: .8rem; font-weight: 700; padding: 4px 14px; border-radius: 999px; box-shadow: 0 3px 0 var(--rose-dark); }
+.photo { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 20px; margin-bottom: 4px; }
+.photo.art { display: grid; place-items: center; background: var(--pink-soft); }
+.photo.art svg { width: 55%; }
 .thumb { width: 160px; height: 160px; border-radius: 50%; display: grid; place-items: center; border: 3px dashed var(--rose); transition: transform .4s; }
 .card:hover .thumb { transform: rotate(12deg) scale(1.05); }
 .thumb.pink { background: var(--pink-soft); } .thumb.cream { background: var(--cream); }
@@ -113,12 +117,6 @@ h2 { font-size: clamp(1.7rem, 4vw, 2.5rem); margin: 6px auto 10px; line-height: 
 .feat span { display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto 12px; font-size: 1.9rem; background: var(--cream); border-radius: 50%; border: 3px dashed var(--rose); }
 .feat p { color: var(--brown-soft); font-size: .95rem; }
 
-.gallery { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 36px; }
-.shot { grid-column: span 2; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); border: 4px solid #fff; aspect-ratio: 1; transition: transform .3s; }
-.shot:nth-child(4) { grid-column: 2 / span 2; } .shot:nth-child(5) { grid-column: span 2; }
-.shot:nth-child(odd) { transform: rotate(-1.5deg); } .shot:nth-child(even) { transform: rotate(1.5deg); }
-.shot:hover { transform: scale(1.05) rotate(0); }
-.shot img { width: 100%; height: 100%; object-fit: cover; }
 .center { text-align: center; }
 
 .steps { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 24px; margin-top: 36px; }
@@ -160,8 +158,6 @@ body.has-cart .wa-float { bottom: 92px; }
 /* animação ao rolar */
 .js .reveal { opacity: 0; transform: translateY(26px); transition: opacity .7s, transform .7s; }
 .js .reveal.in { opacity: 1; transform: none; }
-.js .shot.reveal.in:nth-child(odd) { transform: rotate(-1.5deg); }
-.js .shot.reveal.in:nth-child(even) { transform: rotate(1.5deg); }
 
 @media (max-width: 800px) {
   .nav nav a:not(.btn) { display: none; }
@@ -171,8 +167,6 @@ body.has-cart .wa-float { bottom: 92px; }
   .actions, .stats { justify-content: center; }
   .stats { gap: 16px; flex-wrap: wrap; }
   .s1 { right: -20px; } .s2 { left: -20px; }
-  .gallery { grid-template-columns: repeat(2, 1fr); }
-  .shot, .shot:nth-child(4), .shot:nth-child(5) { grid-column: auto; }
   .topbar { font-size: .78rem; }
 }
 @media (prefers-reduced-motion: reduce) {
