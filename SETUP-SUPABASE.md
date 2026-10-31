@@ -15,6 +15,8 @@ window.SUPABASE_CONFIG = { url: "https://SEU-PROJETO.supabase.co", anonKey: "SUA
 
 A chave `anon` pode ficar no site: quem protege os dados são as regras do `schema.sql`.
 
+Não há biblioteca para instalar: o site conversa com o Supabase por chamadas HTTP simples.
+
 ## Primeiro uso
 Abra `.../admin.html` (não há link no site; salve nos favoritos), digite a senha da loja (5 erros seguidos bloqueiam o painel por 15 minutos) e, na primeira vez, clique em **Importar cardápio atual**. Depois é só cadastrar produto novo e tocar em ⭐ Destaque.
 

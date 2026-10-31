@@ -10,7 +10,7 @@
     t.textContent = msg; t.classList.toggle("erro", !!erro); t.hidden = false;
     clearTimeout(tt); tt = setTimeout(() => (t.hidden = true), erro ? 6000 : 3000);
   }
-  const imgSrc = (p) => (!p.img ? "" : /^(data:|https?:)/.test(p.img) ? p.img : `assets/${p.img}.jpg`);
+  const imgSrc = (p) => (!p.img ? "" : /^(data:|https?:)/.test(p.img) ? p.img : `assets/${p.img}.webp`);
   const resumo = (p) => {
     const v = (p.variantes || []).filter((x) => x.price != null).map((x) => x.price);
     return v.length ? (Math.min(...v) === Math.max(...v) ? brl(v[0]) : `${brl(Math.min(...v))} a ${brl(Math.max(...v))}`) : "preço a consultar";
@@ -152,10 +152,10 @@
 
   async function reduzir(file) {
     const bmp = await createImageBitmap(file, { imageOrientation: "from-image" });
-    const k = Math.min(1, 800 / Math.max(bmp.width, bmp.height));
+    const k = Math.min(1, 720 / Math.max(bmp.width, bmp.height));
     const c = document.createElement("canvas"); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
     c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
-    return c.toDataURL("image/jpeg", 0.82);
+    return c.toDataURL("image/jpeg", 0.76);
   }
 
   $("formProd").addEventListener("submit", async (e) => {

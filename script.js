@@ -22,7 +22,7 @@ const qtd = {}; // chave "produto|variante" -> { nome, label, price, n }
 let contagemSalva = {};
 const key = (p, v) => `${p.nome}|${v.label || ""}`;
 const variantesDe = (p) => (p.variantes && p.variantes.length ? p.variantes : [{ price: null }]);
-const imgSrc = (p) => (!p.img ? "" : /^(data:|https?:)/.test(p.img) ? p.img : `assets/${p.img}.jpg`);
+const imgSrc = (p) => (!p.img ? "" : /^(data:|https?:)/.test(p.img) ? p.img : `assets/${p.img}.webp`);
 
 function cardHtml(p) {
   const src = imgSrc(p);
@@ -197,8 +197,20 @@ $("send").addEventListener("click", (e) => {
 });
 
 // Gaveta do carrinho
-const abrir = () => { $("overlay").hidden = false; $("drawer").hidden = false; document.body.classList.add("lock"); $("closeCart").focus(); };
-const fechar = () => { $("overlay").hidden = true; $("drawer").hidden = true; document.body.classList.remove("lock"); };
+// Enquanto o carrinho está aberto, o resto da página fica "inerte": o teclado e os leitores de tela ficam só nele.
+const fundo = () => document.querySelectorAll(".topbar, .nav, main, body > footer, #cart, .wa-float");
+let abriuDe = null;
+const abrir = () => {
+  abriuDe = document.activeElement;
+  $("overlay").hidden = false; $("drawer").hidden = false; document.body.classList.add("lock");
+  fundo().forEach((e) => (e.inert = true));
+  $("closeCart").focus();
+};
+const fechar = () => {
+  $("overlay").hidden = true; $("drawer").hidden = true; document.body.classList.remove("lock");
+  fundo().forEach((e) => (e.inert = false));
+  if (abriuDe && abriuDe.isConnected && !abriuDe.hidden) abriuDe.focus();
+};
 ["openCart", "barOpen"].forEach((id) => $(id).addEventListener("click", abrir));
 $("closeCart").addEventListener("click", fechar);
 $("overlay").addEventListener("click", fechar);
