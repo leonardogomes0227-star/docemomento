@@ -107,8 +107,30 @@ h2 { font-size: clamp(1.7rem, 4vw, 2.5rem); margin: 6px auto 10px; line-height: 
 .card:hover .thumb { transform: rotate(12deg) scale(1.05); }
 .thumb.pink { background: var(--pink-soft); } .thumb.cream { background: var(--cream); }
 .thumb svg { width: 108px; }
+.variants { display: grid; gap: 8px; width: 100%; margin-top: 4px; }
+.variant { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--cream-soft); border-radius: 999px; padding: 4px 4px 4px 16px; }
+.variants.single .variant { justify-content: center; flex-direction: column; background: none; padding: 0; gap: 6px; }
+.vlabel { display: flex; flex-direction: column; font-size: .9rem; font-weight: 700; text-align: left; line-height: 1.25; }
+.vlabel b { color: var(--rose-dark); font-weight: 800; }
+.variants.single .vlabel { font-size: 1.15rem; }
+.card .variants { padding-inline: 0; }
+.photo.art span { font-size: 4.5rem; }
+.checkout { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 30px 26px; margin-top: 50px; text-align: left; max-width: 640px !important; border: 3px dashed var(--pink); }
+.checkout h3 { text-align: center; margin-bottom: 12px; }
+.checkout .empty { text-align: center; color: var(--brown-soft); }
+.checkout ul { list-style: none; display: grid; gap: 8px; margin-bottom: 14px; }
+.checkout li { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 8px; border-bottom: 1px dashed var(--pink); }
+.checkout li small { color: var(--brown-soft); }
+.sum { display: grid; gap: 4px; margin-bottom: 14px; }
+.sum div { display: flex; justify-content: space-between; }
+.sum .tot { font-size: 1.25rem; font-weight: 800; color: var(--rose-dark); }
+.checkout .small { margin: 0 0 14px; }
+.checkout label { display: block; font-weight: 800; margin-bottom: 6px; }
+.checkout textarea { width: 100%; font: inherit; color: inherit; padding: 12px 14px; border: 2px solid var(--pink); border-radius: 16px; background: var(--cream-soft); resize: vertical; margin-bottom: 18px; }
+.checkout .btn { display: block; text-align: center; }
+.checkout .btn[hidden] { display: none; }
 .qty { display: flex; align-items: center; gap: 4px; background: var(--pink-soft); border-radius: 999px; padding: 4px; margin-top: 6px; }
-.qty button { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--rose); color: #fff; font-size: 1.4rem; font-weight: 800; cursor: pointer; transition: transform .1s; }
+.qty button { width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--rose); color: #fff; font-size: 1.4rem; font-weight: 800; cursor: pointer; transition: transform .1s; }
 .qty button:active { transform: scale(.9); }
 .qty output { min-width: 44px; font-weight: 800; font-size: 1.2rem; }
 .note { margin-top: 40px; font-weight: 700; }
