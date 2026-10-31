@@ -39,7 +39,14 @@
     const cfg = window.SUPABASE_CONFIG;
     if (!cfg) return null;
     await carregarScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js");
-    const sb = window.supabase.createClient(cfg.url, cfg.anonKey);
+    // Chaves novas (sb_publishable_...) não são JWT: o gateway não aceita a chave no cabeçalho Authorization.
+    // Tiramos esse cabeçalho só quando ele é a própria chave; depois do login ele leva o token da Ana.
+    const semBearerPublico = (url, opts = {}) => {
+      const h = new Headers(opts.headers || {});
+      if (h.get("Authorization") === "Bearer " + cfg.anonKey) h.delete("Authorization");
+      return fetch(url, { ...opts, headers: h });
+    };
+    const sb = window.supabase.createClient(cfg.url, cfg.anonKey, { global: { fetch: semBearerPublico } });
     const daLinha = (r) => ({ id: r.id, nome: r.nome, categoria: r.categoria, desc: r.descricao, img: r.img, variantes: r.variantes,
       destaque: r.destaque, novo: r.novo, esgotado: r.esgotado, ativo: r.ativo, ordem: r.ordem });
     const paraLinha = (p) => ({ id: p.id, nome: p.nome, categoria: p.categoria || "", descricao: p.desc || "", img: p.img || "",

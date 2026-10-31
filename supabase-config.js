@@ -1,4 +1,6 @@
 // Configuração do Supabase (veja SETUP-SUPABASE.md).
-// Enquanto estiver null, o site usa o cardápio de catalogo.js e o painel não conecta.
-// Exemplo: window.SUPABASE_CONFIG = { url: "https://xxxx.supabase.co", anonKey: "..." };
-window.SUPABASE_CONFIG = window.SUPABASE_CONFIG || null;
+// A chave "publishable" é pública por natureza: quem protege os dados são as regras do schema.sql.
+window.SUPABASE_CONFIG = window.SUPABASE_CONFIG || {
+  url: "https://rrqyoqkgfgshaofgdvfd.supabase.co",
+  anonKey: "sb_publishable_tEK5BZG8SWurIY_78WxXUg_ncmGTgRm",
+};
