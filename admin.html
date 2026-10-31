@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Painel · Doce Momento</title>
+<link rel="icon" href="assets/logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playpen+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header class="top">
+  <img src="assets/logo.jpg" alt="" width="40" height="40">
+  <strong>Painel Doce Momento</strong>
+  <span class="spacer"></span>
+  <a href="index.html" class="link">Ver site</a>
+  <button type="button" id="sair" class="ghost" hidden>Sair</button>
+</header>
+<p class="banner" id="demo" hidden>Modo demonstração: o que você mudar aqui fica só neste navegador e não vai para o site dos clientes.</p>
+
+<main>
+  <section id="semConfig" class="box" hidden>
+    <h1>Painel ainda não conectado</h1>
+    <p>Falta ligar o Supabase. O passo a passo está no arquivo <b>SETUP-SUPABASE.md</b>.</p>
+    <p>Para só experimentar o painel, abra <a class="link" href="admin.html?demo">admin.html?demo</a>.</p>
+  </section>
+
+  <section id="login" class="box" hidden>
+    <h1>Entrar</h1>
+    <form id="formLogin">
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="senha">Senha</label>
+      <input id="senha" type="password" autocomplete="current-password" required>
+      <p class="erro" id="erroLogin" hidden></p>
+      <button class="btn" type="submit">Entrar</button>
+    </form>
+  </section>
+
+  <section id="painel" hidden>
+    <div class="bar">
+      <h1>Produtos</h1>
+      <button type="button" id="novo" class="btn">＋ Novo produto</button>
+    </div>
+    <p class="dica">Toque em <b>⭐ Destaque</b> para o produto aparecer no topo do site. Use <b>Novo produto</b> para cadastrar.</p>
+    <div class="box" id="vazio" hidden>
+      <p>Ainda não há produtos salvos no banco. Importe o cardápio atual para começar a editar.</p>
+      <button type="button" class="btn" id="importar">Importar cardápio atual</button>
+    </div>
+    <ul id="lista"></ul>
+  </section>
+</main>
+
+<dialog id="dlg" aria-labelledby="dlgTitulo">
+  <form id="formProd">
+    <h2 id="dlgTitulo">Novo produto</h2>
+
+    <label for="fNome">Nome do produto</label>
+    <input id="fNome" type="text" required maxlength="60" placeholder="Ex.: Cookie de Ninho">
+
+    <label for="fCat">Categoria</label>
+    <input id="fCat" type="text" list="cats" required maxlength="40" placeholder="Escolha ou escreva uma nova">
+    <datalist id="cats"></datalist>
+
+    <label for="fDesc">Descrição</label>
+    <textarea id="fDesc" rows="3" maxlength="300" placeholder="Conte como é o produto"></textarea>
+
+    <div class="foto">
+      <img id="fPreview" alt="" hidden>
+      <div>
+        <label for="fFoto">Foto</label>
+        <input id="fFoto" type="file" accept="image/*">
+        <button type="button" class="ghost" id="fSemFoto" hidden>Remover foto</button>
+      </div>
+    </div>
+
+    <div id="precoSimples">
+      <label for="fPreco">Preço (R$)</label>
+      <input id="fPreco" type="text" inputmode="decimal" placeholder="Ex.: 15,00">
+      <button type="button" class="ghost" id="maisOp">＋ Mais opções (ex.: massa black, com Nutella)</button>
+    </div>
+    <fieldset id="opsBox" hidden>
+      <legend>Opções e preços</legend>
+      <p class="dica">Uma linha para cada opção. Deixe o preço vazio para mostrar "consulte".</p>
+      <div id="ops"></div>
+      <div class="linha">
+        <button type="button" class="ghost" id="addOp">＋ Adicionar opção</button>
+        <button type="button" class="ghost" id="addMassa">Massa tradicional / black</button>
+      </div>
+    </fieldset>
+
+    <div class="flags">
+      <label><input type="checkbox" id="fDestaque"> ⭐ Colocar em destaque no site</label>
+    </div>
+
+    <p class="erro" id="erroForm" hidden></p>
+    <div class="linha fim">
+      <button type="button" class="ghost" id="cancelar">Cancelar</button>
+      <button type="submit" class="btn" id="salvar">Salvar produto</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="firebase-config.js"></script>
+<script src="catalogo.js"></script>
+<script src="dados.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
