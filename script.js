@@ -10,7 +10,6 @@ const MASSAS = (price) => [
   { label: "Massa tradicional", price },
   { label: "Massa black", price },
 ];
-const EMPADA = `<svg viewBox="0 0 120 120" role="img" aria-label="Empada de frango"><ellipse cx="60" cy="100" rx="40" ry="8" fill="#f1c3ca"/><path d="M16 72Q16 36 60 36t44 36l-6 20Q60 104 22 92z" fill="#d9993f"/><path d="M18 64Q20 38 60 38t42 26Q60 76 18 64z" fill="#f0c27a"/><path d="M22 91Q60 103 98 91" fill="none" stroke="#b9733f" stroke-width="5" stroke-dasharray="2 8" stroke-linecap="round"/><ellipse cx="60" cy="52" rx="6" ry="3.500" fill="#b9733f"/><path d="M48 28q-5-7 0-13M60 26q-5-7 0-13M72 28q-5-7 0-13" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>`;
 const PRODUTOS = [
   { titulo: "🍪 Cookies", itens: [
     { nome: "Cookie tradicional", img: "cookie-massa-black", desc: "Cookie clássico com gotas de chocolate. Escolha a massa: tradicional ou black.", variantes: MASSAS(8) },
@@ -34,7 +33,7 @@ const PRODUTOS = [
     { nome: "Brookie", img: "brookie", desc: "A união perfeita entre brownie e cookie, trazendo duas texturas deliciosas em uma só sobremesa.", variantes: [{ label: "Tradicional", price: 15 }, { label: "Com Nutella", price: 18 }] },
   ]},
   { titulo: "🥟 Salgados", itens: [
-    { nome: "Empada de frango", svg: EMPADA, desc: "Massa leve e delicada, com recheio cremoso de frango bem temperadinho.", variantes: [{ price: 28 }] },
+    { nome: "Empada de frango", img: "empada-de-frango", desc: "Massa leve e delicada, com recheio cremoso de frango bem temperadinho.", variantes: [{ price: 28 }] },
   ]},
 ];
 
@@ -60,7 +59,7 @@ $("menu").innerHTML = PRODUTOS.map((g) => `
   <div class="cards">${g.itens.map((p) => {
     const foto = p.img
       ? `<img class="photo" src="assets/${p.img}.jpg" alt="${p.nome}" width="400" height="400" loading="lazy">`
-      : `<div class="photo art">${p.svg}</div>`;
+      : `<div class="photo art"></div>`;
     const linhas = p.variantes.map((v) => `
       <div class="variant" data-key="${key(p, v)}">
         <span class="vlabel">${v.label ? `<span>${v.label}</span>` : ""}<b>${v.price == null ? "consulte" : brl(v.price)}</b></span>
