@@ -45,7 +45,7 @@
       <h1>Produtos</h1>
       <button type="button" id="novo" class="btn">＋ Novo produto</button>
     </div>
-    <p class="dica">Toque em <b>⭐</b> para colocar o produto nos destaques do site, em <b>🆕</b> para mostrar o selo "Novo" e em <b>Esgotado</b> para tirar das vendas por enquanto. A mudança aparece no site na hora.</p>
+    <p class="dica">Toque em <b>⭐ Destaque</b> para o produto aparecer no topo do site. Use <b>Novo produto</b> para cadastrar.</p>
     <div class="box" id="vazio" hidden>
       <p>Ainda não há produtos salvos no banco. Importe o cardápio atual para começar a editar.</p>
       <button type="button" class="btn" id="importar">Importar cardápio atual</button>
@@ -77,9 +77,14 @@
       </div>
     </div>
 
-    <fieldset>
-      <legend>Preço e opções</legend>
-      <p class="dica">Uma linha só com o preço, ou várias para opções (ex.: "Massa black", "Com Nutella"). Deixe o preço vazio para mostrar "consulte".</p>
+    <div id="precoSimples">
+      <label for="fPreco">Preço (R$)</label>
+      <input id="fPreco" type="text" inputmode="decimal" placeholder="Ex.: 15,00">
+      <button type="button" class="ghost" id="maisOp">＋ Mais opções (ex.: massa black, com Nutella)</button>
+    </div>
+    <fieldset id="opsBox" hidden>
+      <legend>Opções e preços</legend>
+      <p class="dica">Uma linha para cada opção. Deixe o preço vazio para mostrar "consulte".</p>
       <div id="ops"></div>
       <div class="linha">
         <button type="button" class="ghost" id="addOp">＋ Adicionar opção</button>
@@ -88,9 +93,7 @@
     </fieldset>
 
     <div class="flags">
-      <label><input type="checkbox" id="fDestaque"> ⭐ Destaque</label>
-      <label><input type="checkbox" id="fNovo"> 🆕 Novo</label>
-      <label><input type="checkbox" id="fEsgotado"> Esgotado</label>
+      <label><input type="checkbox" id="fDestaque"> ⭐ Colocar em destaque no site</label>
     </div>
 
     <p class="erro" id="erroForm" hidden></p>
