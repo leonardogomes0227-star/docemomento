@@ -3,6 +3,4 @@
 window.SUPABASE_CONFIG = window.SUPABASE_CONFIG || {
   url: "https://rrqyoqkgfgshaofgdvfd.supabase.co",
   anonKey: "sb_publishable_tEK5BZG8SWurIY_78WxXUg_ncmGTgRm",
-  // E-mail fixo do login da loja: o painel pede só a senha.
-  adminEmail: "loja@docemomento.com",
 };

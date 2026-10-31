@@ -25,9 +25,8 @@
   });
   A.ouvirProdutos((l) => { lista = l; desenhar(); }, (e) => toast("Não foi possível ler os produtos: " + e.message, true));
 
-  // ---- Login: só a senha. O e-mail fixo da loja fica em supabase-config.js.
+  // ---- Login: só a senha, conferida no banco (painel-senha.sql), que também bloqueia após 5 erros.
   // Trava contra tentativas seguidas: depois de 3 erros espera 30 s, depois 1 min, 5 min e 15 min.
-  const adminEmail = (window.SUPABASE_CONFIG || {}).adminEmail || "";
   const LK = "dm-admin-bloqueio";
   const lerBloqueio = () => { try { return JSON.parse(localStorage.getItem(LK)) || { falhas: 0, ate: 0 }; } catch { return { falhas: 0, ate: 0 }; } };
   const gravarBloqueio = (b) => { try { localStorage.setItem(LK, JSON.stringify(b)); } catch {} };
@@ -51,11 +50,11 @@
     if (restante() > 0) return mostrarBloqueio();
     $("erroLogin").hidden = true;
     try {
-      await A.login(adminEmail, $("senha").value);
+      await A.login("", $("senha").value);
       gravarBloqueio({ falhas: 0, ate: 0 }); $("senha").value = "";
     } catch (err) {
       const b = lerBloqueio(); b.falhas++;
-      const espera = err.status === 429 ? 300 : b.falhas >= 7 ? 900 : [0, 0, 0, 30, 60, 300, 300][b.falhas];
+      const espera = err.bloqueado ? 900 : err.status === 429 ? 300 : b.falhas >= 7 ? 900 : [0, 0, 0, 30, 60, 300, 300][b.falhas];
       b.ate = espera ? Date.now() + espera * 1000 : 0; gravarBloqueio(b);
       if (espera) mostrarBloqueio(); else { $("erroLogin").textContent = "Senha incorreta."; $("erroLogin").hidden = false; }
     }

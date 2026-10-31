@@ -60,19 +60,41 @@
         ouvintes.forEach((o) => o.cb(l));
       } catch (e) { ouvintes.forEach((o) => o.erro && o.erro(e)); }
     }
-    const ok = async (req) => { const { error } = await req; if (error) throw error; };
+    // Senha única conferida no banco (painel-senha.sql). Fica só na memória da aba (sessionStorage).
+    const SK = "dm-admin-senha";
+    let senhaAtual = null;
+    try { senhaAtual = sessionStorage.getItem(SK); } catch {}
+    const authOuv = new Set();
+    const avisar = (u) => authOuv.forEach((f) => f(u));
+    function esquecer() { senhaAtual = null; try { sessionStorage.removeItem(SK); } catch {} avisar(null); }
+    async function rpc(nome, args) {
+      const { data, error } = await sb.rpc(nome, args);
+      if (error) {
+        const e = new Error(error.message); e.code = error.code;
+        e.bloqueado = /bloqueado/.test(error.message || "");
+        if (/senha_incorreta/.test(error.message || "")) { e.senhaIncorreta = true; esquecer(); }
+        throw e;
+      }
+      return data;
+    }
     return {
       demo: false,
       ouvirProdutos(cb, erro) { ouvintes.add({ cb, erro }); recarregar(); },
-      async salvar(p) { await ok(sb.from("produtos").upsert(paraLinha(p))); await recarregar(); },
-      async remover(id) { await ok(sb.from("produtos").delete().eq("id", id)); await recarregar(); },
-      async importar(l) { await ok(sb.from("produtos").upsert(l.map(paraLinha))); await recarregar(); },
+      async salvar(p) { await rpc("admin_gravar", { p_senha: senhaAtual, p: paraLinha(p) }); await recarregar(); },
+      async remover(id) { await rpc("admin_remover", { p_senha: senhaAtual, p_id: id }); await recarregar(); },
+      async importar(l) { await rpc("admin_gravar", { p_senha: senhaAtual, p: l.map(paraLinha) }); await recarregar(); },
       onAuth(cb) {
-        sb.auth.getSession().then(({ data }) => cb(data.session?.user || null));
-        sb.auth.onAuthStateChange((_e, s) => cb(s?.user || null));
+        authOuv.add(cb);
+        if (!senhaAtual) return cb(null);
+        rpc("admin_login", { p_senha: senhaAtual }).then((ok) => { if (ok) cb({ email: "loja" }); else esquecer(); }).catch(() => cb(null));
       },
-      async login(email, senha) { await ok(sb.auth.signInWithPassword({ email, password: senha })); },
-      async sair() { await sb.auth.signOut(); },
+      async login(_email, senha) {
+        const ok = await rpc("admin_login", { p_senha: senha });
+        if (ok !== true) { const e = new Error("Senha incorreta"); e.status = 401; throw e; }
+        senhaAtual = senha; try { sessionStorage.setItem(SK, senha); } catch {}
+        avisar({ email: "loja" });
+      },
+      async sair() { esquecer(); },
     };
   }
 
