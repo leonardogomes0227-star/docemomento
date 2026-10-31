@@ -22,8 +22,29 @@
 
   A.onAuth((user) => {
     $("login").hidden = !!user; $("painel").hidden = !user; $("sair").hidden = !user || A.demo;
+    if (user) carregarLoja();
   });
   A.ouvirProdutos((l) => { lista = l; desenhar(); }, (e) => toast("Não foi possível ler os produtos: " + e.message, true));
+
+  // ---- Abrir / fechar a loja
+  let lojaAberta = true;
+  function mostrarLoja(st) {
+    lojaAberta = !(st && st.aberta === false);
+    $("lojaEstado").textContent = lojaAberta ? "🟢 Loja aberta" : "🔴 Loja fechada";
+    $("lojaBtn").textContent = lojaAberta ? "Fechar a loja" : "Abrir a loja";
+    $("lojaBtn").classList.toggle("fechar", lojaAberta);
+    $("lojaAviso").hidden = lojaAberta;
+    if (st && document.activeElement !== $("aviso")) $("aviso").value = st.aviso || "";
+  }
+  async function carregarLoja() { try { mostrarLoja(await A.lojaStatus()); } catch { mostrarLoja(null); } }
+  async function salvarLoja(aberta, ok) {
+    $("lojaBtn").disabled = $("lojaAviso").disabled = true;
+    try { await A.salvarLoja(aberta, $("aviso").value.trim()); mostrarLoja({ aberta, aviso: $("aviso").value.trim() }); toast(ok); }
+    catch (e) { toast(e.status === 404 || e.code === "PGRST202" ? "Falta rodar o SQL da loja (painel-loja.sql) no Supabase." : "Não foi possível salvar: " + e.message, true); }
+    finally { $("lojaBtn").disabled = $("lojaAviso").disabled = false; }
+  }
+  $("lojaBtn").addEventListener("click", () => salvarLoja(!lojaAberta, lojaAberta ? "Loja fechada. Os pedidos estão pausados." : "Loja aberta! Já pode receber pedidos."));
+  $("lojaAviso").addEventListener("click", () => salvarLoja(false, "Aviso atualizado."));
 
   // ---- Login: só a senha, conferida no banco (painel-senha.sql), que também bloqueia após 5 erros.
   // Trava contra tentativas seguidas: depois de 3 erros espera 30 s, depois 1 min, 5 min e 15 min.

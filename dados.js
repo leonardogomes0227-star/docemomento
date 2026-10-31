@@ -26,6 +26,8 @@
       async salvar(p) { gravar(lista().filter((x) => x.id !== p.id).concat(limpar(p))); },
       async remover(id) { gravar(lista().filter((x) => x.id !== id)); },
       async importar(l) { gravar(l.map(limpar)); },
+      async lojaStatus() { try { return JSON.parse(localStorage.getItem("dm-demo-loja")) || { aberta: true, aviso: "" }; } catch { return { aberta: true, aviso: "" }; } },
+      async salvarLoja(aberta, aviso) { localStorage.setItem("dm-demo-loja", JSON.stringify({ aberta, aviso })); },
       onAuth(cb) { cb({ email: "demonstração" }); },
       async login() {}, async sair() {},
     };
@@ -91,6 +93,9 @@
       salvar: (p) => gravarNoBanco("admin_gravar", { p: paraLinha(p) }),
       remover: (id) => gravarNoBanco("admin_remover", { p_id: id }),
       importar: (l) => gravarNoBanco("admin_gravar", { p: l.map(paraLinha) }),
+      // Se o SQL da loja ainda não foi rodado, a consulta falha e o site considera a loja aberta.
+      lojaStatus: () => pedir("rpc/loja_status", { method: "POST", body: "{}" }).catch(() => null),
+      salvarLoja: (aberta, aviso) => rpc("admin_loja", { p_senha: senhaAtual, p_aberta: aberta, p_aviso: aviso || "" }),
       onAuth(cb) {
         authOuv.add(cb);
         if (!senhaAtual) return cb(null);

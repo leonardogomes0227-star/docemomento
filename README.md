@@ -9,12 +9,12 @@ Site de vendas (HTML, CSS e JavaScript puros, sem build) com carrinho que envia 
 | `catalogo.js` | Cardápio padrão (usado se o banco estiver fora do ar e para importar no painel) |
 | `dados.js`, `supabase-config.js` | Leitura e gravação dos produtos no Supabase |
 | `admin.html`, `admin.js`, `admin.css` | Painel da loja (senha única) |
-| `schema.sql`, `painel-senha.sql` | Tabela e senha do painel (rodar uma vez no Supabase) |
+| `schema.sql`, `painel-senha.sql`, `painel-loja.sql` | Tabela, senha do painel e opção de fechar a loja (rodar uma vez cada no Supabase) |
 | `SETUP-SUPABASE.md` | Passo a passo para ligar o painel |
 | `assets/` | Fotos (WebP) e ícones |
 
 ## Como mudar as coisas
-- **Produto novo, destaque, preço:** pelo painel (`/admin.html`).
+- **Produto novo, destaque, preço, abrir/fechar a loja:** pelo painel (`/admin.html`).
 - **Taxa de entrega ou número do WhatsApp:** no topo de `script.js` (`TAXA_ENTREGA`, `WHATSAPP`).
 - **Textos do site:** `index.html`.
 - **Cores:** variáveis no começo de `style.css`.

@@ -42,6 +42,15 @@
   </section>
 
   <section id="painel" hidden>
+    <div class="box" id="loja">
+      <h2 id="lojaEstado">Loja aberta</h2>
+      <label for="aviso">Aviso para os clientes (opcional)</label>
+      <input id="aviso" type="text" maxlength="120" placeholder="Ex.: Voltamos amanhã às 18h">
+      <div class="linha">
+        <button type="button" class="btn" id="lojaBtn">Fechar a loja</button>
+        <button type="button" class="ghost" id="lojaAviso" hidden>Atualizar aviso</button>
+      </div>
+    </div>
     <div class="bar">
       <h1>Produtos</h1>
       <button type="button" id="novo" class="btn">＋ Novo produto</button>

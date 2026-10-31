@@ -60,7 +60,7 @@
 })();
 </script>
 
-<div class="topbar">🛵 Entregamos em Rio Verde - MS &nbsp;·&nbsp; Peça pelo WhatsApp e receba fresquinho 🤎</div>
+<div class="topbar" id="topbar">🛵 Entregamos em Rio Verde - MS &nbsp;·&nbsp; Peça pelo WhatsApp e receba fresquinho 🤎</div>
 
 <header class="nav">
   <a class="brand" href="#topo" aria-label="Doce Momento">
@@ -123,6 +123,8 @@
     <p class="eyebrow reveal">Nosso cardápio</p>
     <h2 class="reveal">Monte o seu pedido</h2>
     <p class="sub reveal">Escolha as quantidades, confira o total e envie pelo WhatsApp. Adicionais de Nutella ou Kinder (+R$ 5,00 cada) você escolhe no carrinho.</p>
+
+    <p class="aviso-loja" id="avisoLoja" role="status" hidden></p>
 
     <div id="menu"></div>
 
@@ -228,6 +230,7 @@
     </dl>
     <p class="small" id="consulta" hidden>Itens "a consultar" ficam fora do total. Confirmamos o valor no WhatsApp.</p>
     <p class="hint" id="hint" hidden></p>
+    <p class="hint" id="fechadoNota" hidden>A loja está fechada. Você pode ver o cardápio, mas não dá para enviar pedidos agora.</p>
     <a class="btn" id="send" href="#" target="_blank" rel="noopener">Enviar pedido no WhatsApp</a>
   </footer>
 </aside>

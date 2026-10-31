@@ -291,3 +291,8 @@ body.has-cart .wa-float { bottom: calc(86px + var(--safe-b)); }
 .ads > small { color: var(--brown-soft); font-weight: 700; }
 .ad { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 700; }
 .ad b { color: var(--rose-dark); }
+
+/* loja fechada */
+.aviso-loja { max-width: 640px; margin: 0 auto 24px; padding: 14px 20px; background: var(--brown); color: #fff; border-radius: 20px; font-weight: 700; line-height: 1.5; }
+body.fechada .topbar { background: var(--brown); }
+body.fechada .variant .qty button { opacity: .35; pointer-events: none; }

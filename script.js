@@ -18,6 +18,8 @@ document.querySelectorAll("[data-wa]").forEach((a) => {
   a.rel = "noopener";
 });
 $("ano").textContent = new Date().getFullYear();
+const TOPBAR_ABERTA = $("topbar").textContent;
+let lojaFechada = false;
 $("retNote").textContent = `Retire em ${RETIRADA.endereco}, ${RETIRADA.horario}.`;
 
 // Cardápio: vem do Supabase (painel da Ana) e, sem ele, de catalogo.js
@@ -122,6 +124,18 @@ const adTotal = (l) => ADICIONAIS.reduce((t, a) => t + (l.ad[a.id] || 0) * a.pri
 const totalLinha = (l) => (l.price || 0) * l.n + adTotal(l);
 function ajustarAd(l) { ADICIONAIS.forEach((a) => { if (l.ad[a.id]) l.ad[a.id] = Math.min(l.ad[a.id], l.n); }); }
 
+// Loja aberta ou fechada (definido no painel). Se não der para consultar, a loja fica aberta.
+function aplicarLoja(st) {
+  lojaFechada = !!st && st.aberta === false;
+  const aviso = ((st && st.aviso) || "").trim();
+  document.body.classList.toggle("fechada", lojaFechada);
+  $("topbar").textContent = lojaFechada ? `🔒 Loja fechada no momento${aviso ? " · " + aviso : ""}` : TOPBAR_ABERTA;
+  $("avisoLoja").hidden = !lojaFechada;
+  const avisoPonto = aviso && !/[.!?]$/.test(aviso) ? aviso + "." : aviso;
+  $("avisoLoja").textContent = lojaFechada ? `🔒 Loja fechada no momento.${avisoPonto ? " " + avisoPonto : ""} Você pode ver o cardápio, mas os pedidos estão pausados.` : "";
+  render();
+}
+
 function render() {
   const linhas = Object.entries(qtd).filter(([, l]) => l.n > 0);
   const itens = linhas.reduce((s, [, l]) => s + l.n, 0);
@@ -138,8 +152,8 @@ function render() {
     c.classList.toggle("selected", linhas.some(([, l]) => l.nome === c.dataset.p)));
 
   // contadores
-  document.body.classList.toggle("has-cart", !vazio);
-  $("cart").hidden = vazio;
+  document.body.classList.toggle("has-cart", !vazio && !lojaFechada);
+  $("cart").hidden = vazio || lojaFechada;
   $("badge").hidden = vazio;
   $("badge").textContent = itens;
   $("cartCount").textContent = itens;
@@ -166,7 +180,9 @@ function render() {
   $("consulta").hidden = consultar.length === 0;
   $("endWrap").hidden = !entrega;
   $("retNote").hidden = entrega;
-  $("send").classList.toggle("off", vazio);
+  $("send").classList.toggle("off", vazio || lojaFechada);
+  $("send").textContent = lojaFechada ? "Loja fechada no momento" : "Enviar pedido no WhatsApp";
+  $("fechadoNota").hidden = !lojaFechada;
 
   const msg = [
     "Olá! Quero fazer um pedido pelo site 🍪", "",
@@ -188,8 +204,8 @@ function render() {
   salvar();
 }
 
-function mudar(k, d) { const l = qtd[k]; l.n = Math.max(0, l.n + d); ajustarAd(l); render(); }
-function mudarAd(k, id, d) { const l = qtd[k]; l.ad[id] = Math.max(0, Math.min(l.n, (l.ad[id] || 0) + d)); render(); }
+function mudar(k, d) { if (lojaFechada) return; const l = qtd[k]; l.n = Math.max(0, l.n + d); ajustarAd(l); render(); }
+function mudarAd(k, id, d) { if (lojaFechada) return; const l = qtd[k]; l.ad[id] = Math.max(0, Math.min(l.n, (l.ad[id] || 0) + d)); render(); }
 $("menu").addEventListener("click", (e) => {
   const b = e.target.closest(".qty button");
   if (b) mudar(b.closest(".variant").dataset.key, Number(b.dataset.d));
@@ -213,6 +229,7 @@ document.querySelector(`input[name="tipo"][value="${estado.tipo}"]`).checked = t
 }));
 $("tipo").addEventListener("change", (e) => { estado.tipo = e.target.value; $("hint").hidden = true; render(); });
 $("send").addEventListener("click", (e) => {
+  if (lojaFechada) { e.preventDefault(); return; }
   const itens = Object.values(qtd).some((l) => l.n > 0);
   const falta = !itens ? null : !estado.nome.trim() ? "nome" : estado.tipo === "entrega" && !estado.end.trim() ? "end" : "";
   if (falta === "" ) return;
@@ -245,7 +262,11 @@ document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("draw
 
 atualizarProdutos(produtos);
 
-DM.conectar().then((a) => a && a.ouvirProdutos((l) => { if (l.length) atualizarProdutos(l); }, () => {}));
+DM.conectar().then((a) => {
+  if (!a) return;
+  a.ouvirProdutos((l) => { if (l.length) atualizarProdutos(l); }, () => {});
+  a.lojaStatus && a.lojaStatus().then(aplicarLoja);
+});
 
 // Animação ao rolar
 const io = "IntersectionObserver" in window
